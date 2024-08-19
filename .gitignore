@@ -475,3 +475,4 @@ composer.lock
 
 #Big no no
 requirements/connection.php
+DatabaseProjectTEST603.sqlproj
