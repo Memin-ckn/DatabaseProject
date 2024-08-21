@@ -61,7 +61,7 @@ require "../requirements/connection.php";
         <div class="widget">
             <?php
             // Set pagination parameters
-            $limit = 50;
+            $limit = 25;
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
             $start = ($page - 1) * $limit;
 
