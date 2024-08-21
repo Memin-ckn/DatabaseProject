@@ -24,6 +24,11 @@ require "../requirements/connection.php";
             <form method="GET" action="">
                 <ul>
                     <li>
+                        <label for="CUSTOMER">CUSTOMER:</label>
+                        <input type="text" name="CUSTOMER" id="CUSTOMER"
+                            value="<?php echo isset($_GET['CUSTOMER']) ? htmlspecialchars($_GET['CUSTOMER']) : ''; ?>">
+                    </li>
+                    <li>
                         <label for="POTYPE">POTYPE:</label>
                         <input type="text" name="POTYPE" id="POTYPE"
                             value="<?php echo isset($_GET['POTYPE']) ? htmlspecialchars($_GET['POTYPE']) : ''; ?>">
@@ -51,27 +56,6 @@ require "../requirements/connection.php";
                         <button type="submit">Filter</button>
                         <a href="orders.php"><button type="button">Reset</button></a>
                     </li>
-                    <li>
-                        <!-- Export Buttons -->
-                        <button type="submit" name="export" value="excel">Export to Excel</button>
-                        <button type="submit" name="export" value="csv">Export to CSV</button>
-                        <!-- <?php
-                        if (isset($_GET['export'])) {
-                            $exportType = $_GET['export'];
-
-                            // Include the appropriate export handler
-                            if ($exportType === 'excel') {
-                                //include '../export/excel.php';
-                            } elseif ($exportType === 'csv') {
-                                //include '../export/csv.php';
-                                header("Location: ../export/csv.php");
-                            }
-                            exit;
-                        }
-
-                        // hala en altta error çıkıyor ve filtre çalışmıyor
-                        ?> -->
-                    </li>
                 </ul>
             </form>
         </div>
@@ -86,6 +70,10 @@ require "../requirements/connection.php";
             $whereClauses = [];
             $params = [];
 
+            if (isset($_GET['CUSTOMER']) && $_GET['CUSTOMER'] !== '') {
+                $whereClauses[] = "CUSTOMER = ?";
+                $params[] = $_GET['CUSTOMER'];
+            }
             if (isset($_GET['POTYPE']) && $_GET['POTYPE'] !== '') {
                 $whereClauses[] = "POTYPE = ?";
                 $params[] = $_GET['POTYPE'];
