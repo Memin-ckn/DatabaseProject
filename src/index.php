@@ -18,7 +18,7 @@ require "../requirements/connection.php";
     <div class="main-content">
         <header>
             <h1>Welcome,
-                <?php echo htmlspecialchars($_SESSION['username']); ?>
+                <?php echo ($_SESSION['CUSTOMER']); ?>
             </h1>
         </header>
 

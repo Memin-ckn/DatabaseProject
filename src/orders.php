@@ -25,8 +25,7 @@ require "../requirements/connection.php";
                 <ul>
                     <li>
                         <label for="CUSTOMER">CUSTOMER:</label>
-                        <input type="text" name="CUSTOMER" id="CUSTOMER"
-                            value="<?php echo isset($_GET['CUSTOMER']) ? htmlspecialchars($_GET['CUSTOMER']) : ''; ?>">
+                        <?php echo $_SESSION['CUSTOMER'] ?>
                     </li>
                     <li>
                         <label for="POTYPE">POTYPE:</label>
@@ -70,9 +69,9 @@ require "../requirements/connection.php";
             $whereClauses = [];
             $params = [];
 
-            if (isset($_GET['CUSTOMER']) && $_GET['CUSTOMER'] !== '') {
+            if (isset($_SESSION['CUSTOMER']) && $_SESSION['CUSTOMER'] !== '') {
                 $whereClauses[] = "CUSTOMER = ?";
-                $params[] = $_GET['CUSTOMER'];
+                $params[] = $_SESSION['CUSTOMER'];
             }
             if (isset($_GET['POTYPE']) && $_GET['POTYPE'] !== '') {
                 $whereClauses[] = "POTYPE = ?";

@@ -81,7 +81,13 @@
             $password = $_POST['password'];
             $opr = $_POST['opr'];
 
-            if ($opr === 'Register') {
+            
+             if ($opr === 'Login'){
+                $_SESSION['CUSTOMER'] = $username;
+                header("Location: index.php");
+            } 
+
+            /* if ($opr === 'Register') {
                 // Check if the username exists in IASPRDORDER
                 $checkUserSql = "SELECT * FROM IASPRDORDER WHERE username = ?";
                 $checkUserStmt = sqlsrv_prepare($conn, $checkUserSql, [$username]);
@@ -130,7 +136,7 @@
                 }
 
                 sqlsrv_free_stmt($loginStmt);
-            }
+            } */
         }
 
         sqlsrv_close($conn);
