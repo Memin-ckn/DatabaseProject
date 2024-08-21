@@ -51,27 +51,6 @@ require "../requirements/login_check.php";
                         <button type="submit">Filter</button>
                         <a href="orders.php"><button type="button">Reset</button></a>
                     </li>
-                    <li>
-                        <!-- Export Buttons -->
-                        <button type="submit" name="export" value="excel">Export to Excel</button>
-                        <button type="submit" name="export" value="csv">Export to CSV</button>
-                        <!-- <?php
-                        if (isset($_GET['export'])) {
-                            $exportType = $_GET['export'];
-
-                            // Include the appropriate export handler
-                            if ($exportType === 'excel') {
-                                //include '../export/excel.php';
-                            } elseif ($exportType === 'csv') {
-                                //include '../export/csv.php';
-                                header("Location: ../export/csv.php");
-                            }
-                            exit;
-                        }
-
-                        // hala en altta error çıkıyor ve filtre çalışmıyor
-                        ?> -->
-                    </li>
                 </ul>
             </form>
         </div>
