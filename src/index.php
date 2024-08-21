@@ -9,7 +9,7 @@
 </head>
 <?php
 require "../requirements/connection.php";
-require "../requirements/login_check.php";
+//require "../requirements/login_check.php";
 ?>
 
 <body>

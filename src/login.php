@@ -70,45 +70,74 @@
         <form action="login.php" method="post">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
-            <input type="submit" value="Login">
+            <input type="submit" name="opr" value="Login">
+            <input type="submit" name="opr" value="Register">
         </form>
         <?php
-        // Start session
         require "../requirements/connection.php";
-        
 
-        // Database connection (replace with your actual database connection details)
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $username = $_POST['username'];
             $password = $_POST['password'];
+            $opr = $_POST['opr'];
 
-            // Check if the user exists
-            if ($username === "memin") {
+            if ($opr === 'Register') {
+                // Check if the username exists in IASPRDORDER
+                $checkUserSql = "SELECT * FROM IASPRDORDER WHERE username = ?";
+                $checkUserStmt = sqlsrv_prepare($conn, $checkUserSql, [$username]);
+                sqlsrv_execute($checkUserStmt);
 
-                // Verify the password
-                if ($password === "memin353535") {
+                if (sqlsrv_fetch_array($checkUserStmt, SQLSRV_FETCH_ASSOC)) {
+                    // Check if the username already exists in USERS
+                    $checkUserInUsersSql = "SELECT * FROM USERS WHERE username = ?";
+                    $checkUserInUsersStmt = sqlsrv_prepare($conn, $checkUserInUsersSql, [$username]);
+                    sqlsrv_execute($checkUserInUsersStmt);
+
+                    if (sqlsrv_fetch_array($checkUserInUsersStmt, SQLSRV_FETCH_ASSOC)) {
+                        echo 'User already registered';
+                    } else {
+                        // Add username and password to USERS
+                        $addUserSql = "INSERT INTO USERS (username, pass) VALUES (?, ?)";
+                        $addUserStmt = sqlsrv_prepare($conn, $addUserSql, [$username, $password]);
+                        if (sqlsrv_execute($addUserStmt)) {
+                            echo 'Registration successful!';
+                            header("Location: login.php"); // Redirect to the login page
+                            exit();
+                        } else {
+                            echo 'Error registering user.';
+                        }
+                    }
+                } else {
+                    echo 'Username not found in IASPRDORDER';
+                }
+
+                // Close the statements
+                sqlsrv_free_stmt($checkUserStmt);
+                sqlsrv_free_stmt($checkUserInUsersStmt);
+                sqlsrv_free_stmt($addUserStmt);
+            } else {
+                // Handle login
+                $loginSql = "SELECT * FROM USERS WHERE username = ? AND pass = ?";
+                $loginStmt = sqlsrv_prepare($conn, $loginSql, [$username, $password]);
+                sqlsrv_execute($loginStmt);
+
+                if (sqlsrv_fetch_array($loginStmt, SQLSRV_FETCH_ASSOC)) {
                     // Successful login
-                    $_SESSION['username'] = $username;
-                    $_SESSION['pass'] = $password;
-                    header("Location: index.php"); // Redirect to a protected page
+                    header("Location: index.php"); // Redirect to the main page
                     exit();
                 } else {
-                    $error = "Invalid password.";
-                    echo "Invalid password or username";
-
+                    echo 'Invalid username or password';
                 }
-            } else {
-                $error = "No user found with that username.";
-            }
 
-            $stmt->close();
+                sqlsrv_free_stmt($loginStmt);
+            }
         }
 
         sqlsrv_close($conn);
         ?>
+
+
     </div>
-
-
 
 </body>
 
