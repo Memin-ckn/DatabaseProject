@@ -30,7 +30,8 @@ require "../requirements/connection.php";
                 <p id="total-orders">
                     <?php
                     // Get the total number of records
-                    $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER";
+                    $whereSql = "WHERE CUSTOMER = " . $_SESSION['CUSTOMER'];
+                    $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
                     $countStmt = sqlsrv_query($conn, $countSql);
 
                     if ($countStmt === false) {
