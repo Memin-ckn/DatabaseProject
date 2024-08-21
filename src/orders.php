@@ -24,6 +24,11 @@ require "../requirements/login_check.php";
             <form method="GET" action="">
                 <ul>
                     <li>
+                        <label for="CUSTOMER">CUSTOMER:</label>
+                        <input type="text" name="CUSTOMER" id="CUSTOMER"
+                            value="<?php echo isset($_GET['CUSTOMER']) ? htmlspecialchars($_GET['CUSTOMER']) : ''; ?>">
+                    </li>
+                    <li>
                         <label for="POTYPE">POTYPE:</label>
                         <input type="text" name="POTYPE" id="POTYPE"
                             value="<?php echo isset($_GET['POTYPE']) ? htmlspecialchars($_GET['POTYPE']) : ''; ?>">
@@ -65,6 +70,10 @@ require "../requirements/login_check.php";
             $whereClauses = [];
             $params = [];
 
+            if (isset($_GET['CUSTOMER']) && $_GET['CUSTOMER'] !== '') {
+                $whereClauses[] = "CUSTOMER = ?";
+                $params[] = $_GET['CUSTOMER'];
+            }
             if (isset($_GET['POTYPE']) && $_GET['POTYPE'] !== '') {
                 $whereClauses[] = "POTYPE = ?";
                 $params[] = $_GET['POTYPE'];
