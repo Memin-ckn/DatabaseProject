@@ -55,11 +55,22 @@ require "../requirements/connection.php";
                         <button type="submit">Filter</button>
                         <a href="orders.php"><button type="button">Reset</button></a>
                     </li>
+                    <li>
+                        <!-- Export Button -->
+                        <button type="submit" name="export" value="csv">Export to CSV</button>
+                    </li>
                 </ul>
             </form>
         </div>
         <div class="widget">
             <?php
+
+            if (isset($_GET['export'])) {
+                $exportType = $_GET['export'];
+                sqlsrv_close($conn);
+                header('Location: ../export/csv.php');
+                exit;
+            }
             // Set pagination parameters
             $limit = 25;
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
