@@ -10,7 +10,7 @@
 </head>
 <?php
 require "../requirements/connection.php";
-require "../requirements/login_check.php";
+//require "../requirements/login_check.php";
 ?>
 
 <body>
@@ -23,6 +23,10 @@ require "../requirements/login_check.php";
             <!-- Filter Form -->
             <form method="GET" action="">
                 <ul>
+                    <li>
+                        <label for="CUSTOMER">CUSTOMER:</label>
+                        <?php echo $_SESSION['CUSTOMER'] ?>
+                    </li>
                     <li>
                         <label for="POTYPE">POTYPE:</label>
                         <input type="text" name="POTYPE" id="POTYPE"
@@ -51,13 +55,24 @@ require "../requirements/login_check.php";
                         <button type="submit">Filter</button>
                         <a href="orders.php"><button type="button">Reset</button></a>
                     </li>
+                    <li>
+                        <!-- Export Button -->
+                        <button type="submit" name="export" value="csv">Export to CSV</button>
+                    </li>
                 </ul>
             </form>
         </div>
         <div class="widget">
             <?php
+
+            if (isset($_GET['export'])) {
+                $exportType = $_GET['export'];
+                sqlsrv_close($conn);
+                header('Location: ../export/csv.php');
+                exit;
+            }
             // Set pagination parameters
-            $limit = 50;
+            $limit = 25;
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
             $start = ($page - 1) * $limit;
 
@@ -65,6 +80,10 @@ require "../requirements/login_check.php";
             $whereClauses = [];
             $params = [];
 
+            if (isset($_SESSION['CUSTOMER']) && $_SESSION['CUSTOMER'] !== '') {
+                $whereClauses[] = "CUSTOMER = ?";
+                $params[] = $_SESSION['CUSTOMER'];
+            }
             if (isset($_GET['POTYPE']) && $_GET['POTYPE'] !== '') {
                 $whereClauses[] = "POTYPE = ?";
                 $params[] = $_GET['POTYPE'];
