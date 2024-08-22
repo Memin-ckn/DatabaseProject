@@ -9,7 +9,7 @@
 </head>
 <?php
 require "../requirements/connection.php";
-//require "../requirements/login_check.php";
+require "../requirements/login_check.php";
 ?>
 
 <body>
@@ -18,7 +18,7 @@ require "../requirements/connection.php";
     <div class="main-content">
         <header>
             <h1>Welcome,
-                <?php echo ($_SESSION['CUSTOMER']); ?>
+                <?php echo ($_SESSION['username']); ?>
             </h1>
         </header>
 
@@ -30,7 +30,11 @@ require "../requirements/connection.php";
                 <p id="total-orders">
                     <?php
                     // Get the total number of records
-                    $whereSql = "WHERE CUSTOMER = " . $_SESSION['CUSTOMER'];
+                    if ($_SESSION['username'] === 'memin') {
+                        $whereSql = '';
+                    } else {
+                        $whereSql = "WHERE CUSTOMER = " . $_SESSION['username'];
+                    }
                     $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
                     $countStmt = sqlsrv_query($conn, $countSql);
 

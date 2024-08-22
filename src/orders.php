@@ -10,7 +10,7 @@
 </head>
 <?php
 require "../requirements/connection.php";
-//require "../requirements/login_check.php";
+require "../requirements/login_check.php";
 ?>
 
 <body>
@@ -24,8 +24,8 @@ require "../requirements/connection.php";
             <form method="GET" action="">
                 <ul>
                     <li>
-                        <label for="CUSTOMER">CUSTOMER:</label>
-                        <?php echo $_SESSION['CUSTOMER'] ?>
+                        <label for="username">CUSTOMER:</label>
+                        <?php echo $_SESSION['username'] ?>
                     </li>
                     <li>
                         <label for="POTYPE">POTYPE:</label>
@@ -72,7 +72,7 @@ require "../requirements/connection.php";
                 exit;
             }
             // Set pagination parameters
-            $limit = 25;
+            $limit = 50;
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
             $start = ($page - 1) * $limit;
 
@@ -80,9 +80,12 @@ require "../requirements/connection.php";
             $whereClauses = [];
             $params = [];
 
-            if (isset($_SESSION['CUSTOMER']) && $_SESSION['CUSTOMER'] !== '') {
-                $whereClauses[] = "CUSTOMER = ?";
-                $params[] = $_SESSION['CUSTOMER'];
+            if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
+                if($_SESSION['username'] === 'memin'){
+                }else{
+                    $whereClauses[] = "CUSTOMER = ?";
+                    $params[] = $_SESSION['username'];
+                }
             }
             if (isset($_GET['POTYPE']) && $_GET['POTYPE'] !== '') {
                 $whereClauses[] = "POTYPE = ?";
