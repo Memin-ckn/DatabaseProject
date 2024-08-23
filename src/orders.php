@@ -102,6 +102,30 @@ require "../requirements/login_check.php";
                 die(print_r(sqlsrv_errors(), true));
             }
             ?>
+            <?php
+            if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
+                $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql";
+                $qtyStmt = sqlsrv_query($conn, $qtySql, $params);
+
+                if ($qtyStmt === false) {
+                    die(print_r(sqlsrv_errors(), true));
+                }
+
+                if ($row = sqlsrv_fetch_array($qtyStmt, SQLSRV_FETCH_ASSOC)) {
+                    // Extract the two integer values
+                    $dlv = $row['DELIVERED'];
+                    $byq = $row['BYPRODQTY'];
+                    $totalQty = $dlv + $byq;
+                    ?>
+                    <div id="quantity" class="widget">
+                        <p>Total quantity:
+                            <?php echo $totalQty; ?>
+                        </p>
+                    </div>
+                    <?php
+                }
+            }
+            ?>
             <table>
                 <thead>
                     <tr>
@@ -134,6 +158,7 @@ require "../requirements/login_check.php";
             <?php include "pagination.php" ?>
 
         </div>
+
     </div>
 
     <?php sqlsrv_close($conn); ?>
