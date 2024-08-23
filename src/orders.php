@@ -76,41 +76,7 @@ require "../requirements/login_check.php";
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
             $start = ($page - 1) * $limit;
 
-            // Initialize the WHERE clause
-            $whereClauses = [];
-            $params = [];
-
-            if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
-                if($_SESSION['username'] === 'memin'){
-                }else{
-                    $whereClauses[] = "CUSTOMER = ?";
-                    $params[] = $_SESSION['username'];
-                }
-            }
-            if (isset($_GET['POTYPE']) && $_GET['POTYPE'] !== '') {
-                $whereClauses[] = "POTYPE = ?";
-                $params[] = $_GET['POTYPE'];
-            }
-
-            if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
-                $whereClauses[] = "PRDORDER = ?";
-                $params[] = $_GET['PRDORDER'];
-            }
-
-            if (isset($_GET['CLIENT']) && $_GET['CLIENT'] !== '') {
-                $whereClauses[] = "CLIENT = ?";
-                $params[] = $_GET['CLIENT'];
-            }
-
-            if (isset($_GET['COMPANY']) && $_GET['COMPANY'] !== '') {
-                $whereClauses[] = "COMPANY = ?";
-                $params[] = $_GET['COMPANY'];
-            }
-
-            $whereSql = "";
-            if (count($whereClauses) > 0) {
-                $whereSql = "WHERE " . implode(" AND ", $whereClauses);
-            }
+            include "../requirements/filter.php";
 
             // Get the total number of records
             $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
