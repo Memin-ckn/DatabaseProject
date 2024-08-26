@@ -52,14 +52,11 @@ require "../requirements/login_check.php";
                     </li>
                     <li>
                         <label for="STATUS3">HEPSİ:</label>
-                        <input type="radio" name="STATUS3" id="STATUS3"
-                            value="<?php echo isset($_GET['STATUS3']) ? htmlspecialchars($_GET['STATUS3']) : $_GET['STATUS3'] ?>">
+                        <input type="radio" name="STATUS3" id="STATUS3_ALL" value="">
                         <label for="STATUS3">ONAYLI:</label>
-                        <input type="radio" name="STATUS3" id="STATUS3"
-                            value="<?php echo isset($_GET['STATUS3']) ? htmlspecialchars($_GET['STATUS3']) : '1' ?>">
+                        <input type="radio" name="STATUS3" id="STATUS3_approved" value="1" <?php echo isset($_GET['STATUS3']) && $_GET['STATUS3'] === '1' ? 'checked' : ''; ?>>
                         <label for="STATUS3">ONAYSIZ:</label>
-                        <input type="radio" name="STATUS3" id="STATUS3"
-                            value="<?php echo isset($_GET['STATUS3']) ? htmlspecialchars($_GET['STATUS3']) : '0' ?>">
+                        <input type="radio" name="STATUS3" id="STATUS3_unapproved" value="0" <?php echo isset($_GET['STATUS3']) && $_GET['STATUS3'] === '0' ? 'checked' : ''; ?>>
                     </li>
                     <li>
 
@@ -165,20 +162,6 @@ require "../requirements/login_check.php";
                     <?php endwhile; ?>
                 </tbody>
             </table>
-
-        </div>
-        <div class="widget">
-            <?php
-            $onaysizSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql AND STATUS3 = 0 ORDER BY POTYPE OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-            $onaysizParams = array_merge($params, [$start, $limit]);
-            $onaysizStmt = sqlsrv_query($conn, $onaysizSql, $onaysizParams);
-
-            if ($onaysizStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-            echo "XX";
-            ?>
 
         </div>
         <?php include "pagination.php" ?>
