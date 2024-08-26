@@ -110,30 +110,38 @@ require "../requirements/login_check.php";
                 die(print_r(sqlsrv_errors(), true));
             }
             ?>
-            <?php
-            if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
-                $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql AND STATUS6 = 1";
-                $qtyStmt = sqlsrv_query($conn, $qtySql, $params);
+            <div class="widget">
 
-                if ($qtyStmt === false) {
-                    die(print_r(sqlsrv_errors(), true));
-                }
+                <p>
+                    Total Records:
+                    <?php echo $total_records ?>
+                </p>
 
-                if ($row = sqlsrv_fetch_array($qtyStmt, SQLSRV_FETCH_ASSOC)) {
-                    // Extract the two integer values
-                    $dlv = $row['DELIVERED'];
-                    $byq = $row['BYPRODQTY'];
-                    $totalQty = $dlv + $byq;
-                    ?>
-                    <div id="quantity" class="widget">
+                <?php
+                if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
+                    $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql AND STATUS6 = 1";
+                    $qtyStmt = sqlsrv_query($conn, $qtySql, $params);
+
+                    if ($qtyStmt === false) {
+                        die(print_r(sqlsrv_errors(), true));
+                    }
+
+                    if ($row = sqlsrv_fetch_array($qtyStmt, SQLSRV_FETCH_ASSOC)) {
+                        // Extract the two integer values
+                        $dlv = $row['DELIVERED'];
+                        $byq = $row['BYPRODQTY'];
+                        $totalQty = $dlv + $byq;
+                        ?>
+
                         <p>Total quantity:
                             <?php echo $totalQty, " kg stokta"; ?>
                         </p>
-                    </div>
-                    <?php
+
+                        <?php
+                    }
                 }
-            }
-            ?>
+                ?>
+            </div>
             <table>
                 <thead>
                     <tr>

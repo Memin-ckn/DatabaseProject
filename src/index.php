@@ -29,11 +29,11 @@ require "../requirements/login_check.php";
                 <h3>Total Orders</h3>
                 <p id="total-orders">
                     <?php
+                    $whereSql = "WHERE ISDELETE = 0 ";
                     // Get the total number of records
-                    if ($_SESSION['username'] === 'memin') {
-                        $whereSql = '';
-                    } else {
-                        $whereSql = "WHERE CUSTOMER = " . $_SESSION['username'];
+                    if ($_SESSION['username'] !== 'memin') {
+
+                        $whereSql = $whereSql . "AND CUSTOMER = " . $_SESSION['username'];
                     }
                     $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
                     $countStmt = sqlsrv_query($conn, $countSql);
