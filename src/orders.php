@@ -51,6 +51,17 @@ require "../requirements/login_check.php";
                             value="<?php echo isset($_GET['COMPANY']) ? htmlspecialchars($_GET['COMPANY']) : ''; ?>">
                     </li>
                     <li>
+                        <label for="STATUS3">HEPSİ:</label>
+                        <input type="radio" name="STATUS3" id="STATUS3"
+                            value="<?php echo isset($_GET['STATUS3']) ? htmlspecialchars($_GET['STATUS3']) : $_GET['STATUS3'] ?>">
+                        <label for="STATUS3">ONAYLI:</label>
+                        <input type="radio" name="STATUS3" id="STATUS3"
+                            value="<?php echo isset($_GET['STATUS3']) ? htmlspecialchars($_GET['STATUS3']) : '1' ?>">
+                        <label for="STATUS3">ONAYSIZ:</label>
+                        <input type="radio" name="STATUS3" id="STATUS3"
+                            value="<?php echo isset($_GET['STATUS3']) ? htmlspecialchars($_GET['STATUS3']) : '0' ?>">
+                    </li>
+                    <li>
 
                         <button type="submit">Filter</button>
                         <a href="orders.php"><button type="button">Reset</button></a>
@@ -104,7 +115,7 @@ require "../requirements/login_check.php";
             ?>
             <?php
             if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
-                $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql";
+                $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql AND STATUS6 = 1";
                 $qtyStmt = sqlsrv_query($conn, $qtySql, $params);
 
                 if ($qtyStmt === false) {
@@ -119,7 +130,7 @@ require "../requirements/login_check.php";
                     ?>
                     <div id="quantity" class="widget">
                         <p>Total quantity:
-                            <?php echo $totalQty; ?>
+                            <?php echo $totalQty, " kg stokta"; ?>
                         </p>
                     </div>
                     <?php
@@ -155,9 +166,22 @@ require "../requirements/login_check.php";
                 </tbody>
             </table>
 
-            <?php include "pagination.php" ?>
+        </div>
+        <div class="widget">
+            <?php
+            $onaysizSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql AND STATUS3 = 0 ORDER BY POTYPE OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+            $onaysizParams = array_merge($params, [$start, $limit]);
+            $onaysizStmt = sqlsrv_query($conn, $onaysizSql, $onaysizParams);
+
+            if ($onaysizStmt === false) {
+                die(print_r(sqlsrv_errors(), true));
+            }
+            echo "XX";
+            ?>
 
         </div>
+        <?php include "pagination.php" ?>
 
     </div>
 
@@ -165,3 +189,8 @@ require "../requirements/login_check.php";
 </body>
 
 </html>
+
+<!--
+onaylı status3
+stokta status6
+ -->

@@ -35,6 +35,10 @@ if (isset($_GET['COMPANY']) && $_GET['COMPANY'] !== '') {
     $whereClauses[] = "COMPANY = ?";
     $params[] = $_GET['COMPANY'];
 }
+if (isset($_GET['STATUS3']) && $_GET['STATUS3'] !== '') {
+    $whereClauses[] = "STATUS3 = ?";
+    $params[] = $_GET['STATUS3'];
+}
 
 $whereSql = "";
 if (count($whereClauses) > 0) {
