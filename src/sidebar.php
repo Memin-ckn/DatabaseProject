@@ -3,8 +3,6 @@
     <ul>
         <li><a href="index.php">Dashboard</a></li>
         <li><a href="orders.php">Orders</a></li>
-        <li><a href="#">Settings</a></li>
-        <li><a href="#">Reports</a></li>
     </ul>
 
     <ul>

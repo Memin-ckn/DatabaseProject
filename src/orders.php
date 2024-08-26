@@ -101,7 +101,7 @@ require "../requirements/login_check.php";
             $total_pages = ceil($total_records / $limit);
 
             // Fetch the data with pagination
-            $dataSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY POTYPE OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+            $dataSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
             $dataParams = array_merge($params, [$start, $limit]);
             $dataStmt = sqlsrv_query($conn, $dataSql, $dataParams);
@@ -117,6 +117,7 @@ require "../requirements/login_check.php";
                     <?php echo $total_records ?>
                 </p>
 
+                
                 <?php
                 if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
                     $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql";
@@ -134,7 +135,7 @@ require "../requirements/login_check.php";
                         ?>
 
                         <p>Total quantity:
-                            <?php echo $totalQty, " kg stokta"; ?>
+                            <?php echo $totalQty, " kg sevk edildi."; ?>
                         </p>
 
                         <?php
@@ -153,7 +154,7 @@ require "../requirements/login_check.php";
                 </thead>
                 <tbody>
                     <?php while ($row = sqlsrv_fetch_array($dataStmt, SQLSRV_FETCH_ASSOC)): ?>
-                        <tr>
+                        <tr class="clickable-row" data-prdorder="<?php echo htmlspecialchars($row['PRDORDER']); ?>">
                             <td>
                                 <?php echo htmlspecialchars($row['POTYPE']); ?>
                             </td>
@@ -167,16 +168,50 @@ require "../requirements/login_check.php";
                                 <?php echo htmlspecialchars($row['COMPANY']); ?>
                             </td>
                         </tr>
+                        <tr class="expandable-row" style="display:none;">
+                            <td colspan="4">
+                                <div class="expanded-content"></div>
+                            </td>
+                        </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
-
         </div>
         <?php include "pagination.php" ?>
 
     </div>
 
     <?php sqlsrv_close($conn); ?>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.clickable-row').on('click', function () {
+                var prdOrder = $(this).data('prdorder');
+                var expandableRow = $(this).next('.expandable-row');
+                var expandedContent = expandableRow.find('.expanded-content');
+
+                if (expandableRow.is(':visible')) {
+                    expandableRow.hide(); // Collapse if already expanded
+                } else {
+                    // Fetch and display data if not already loaded
+                    if (expandedContent.is(':empty')) {
+                        $.ajax({
+                            url: '../requirements/fetch_order_details.php',
+                            type: 'GET',
+                            data: { prdorder: prdOrder },
+                            success: function (response) {
+                                expandedContent.html(response);
+                                expandableRow.show(); // Expand the row to show content
+                            }
+                        });
+                    } else {
+                        expandableRow.show(); // Just show the already loaded content
+                    }
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>
