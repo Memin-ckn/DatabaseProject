@@ -119,7 +119,7 @@ require "../requirements/login_check.php";
 
                 <?php
                 if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
-                    $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql AND STATUS6 = 1";
+                    $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql";
                     $qtyStmt = sqlsrv_query($conn, $qtySql, $params);
 
                     if ($qtyStmt === false) {
