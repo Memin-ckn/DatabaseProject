@@ -117,7 +117,6 @@ require "../requirements/login_check.php";
                     <?php echo $total_records ?>
                 </p>
 
-                
                 <?php
                 if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
                     $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql";
@@ -156,6 +155,7 @@ require "../requirements/login_check.php";
                     <?php while ($row = sqlsrv_fetch_array($dataStmt, SQLSRV_FETCH_ASSOC)): ?>
                         <tr class="clickable-row" data-prdorder="<?php echo htmlspecialchars($row['PRDORDER']); ?>">
                             <td>
+                                <i class="fa-solid fa-plus" style="color: #65e692; cursor: pointer;"></i>
                                 <?php echo htmlspecialchars($row['POTYPE']); ?>
                             </td>
                             <td>
@@ -185,13 +185,17 @@ require "../requirements/login_check.php";
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('.clickable-row').on('click', function () {
-                var prdOrder = $(this).data('prdorder');
-                var expandableRow = $(this).next('.expandable-row');
+            // Attach the click event to the <i> element
+            $('.clickable-row i').on('click', function (e) {
+                e.stopPropagation(); // Prevent the event from bubbling up to the row
+
+                var prdOrder = $(this).closest('.clickable-row').data('prdorder');
+                var expandableRow = $(this).closest('.clickable-row').next('.expandable-row');
                 var expandedContent = expandableRow.find('.expanded-content');
 
                 if (expandableRow.is(':visible')) {
                     expandableRow.hide(); // Collapse if already expanded
+                    $(this).removeClass('fa-minus').addClass('fa-plus'); // Change icon back to plus
                 } else {
                     // Fetch and display data if not already loaded
                     if (expandedContent.is(':empty')) {
@@ -202,10 +206,12 @@ require "../requirements/login_check.php";
                             success: function (response) {
                                 expandedContent.html(response);
                                 expandableRow.show(); // Expand the row to show content
-                            }
+                                $(this).removeClass('fa-plus').addClass('fa-minus'); // Change icon to minus
+                            }.bind(this)
                         });
                     } else {
                         expandableRow.show(); // Just show the already loaded content
+                        $(this).removeClass('fa-plus').addClass('fa-minus'); // Change icon to minus
                     }
                 }
             });
