@@ -72,19 +72,19 @@ require "../requirements/login_check.php";
         </div>
         <div class="widget">
             <?php
-            if (isset($_GET['export'])) {
-                $exportType = $_GET['export'];
-                sqlsrv_close($conn);
-                header('Location: ../export/csv.php');
-                exit;
-            }
             // Set pagination parameters
             $limit = 50;
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
             $start = ($page - 1) * $limit;
 
             include "../requirements/filter.php";
-
+            
+            if (isset($_GET['export'])) {
+                $exportType = $_GET['export'];
+                sqlsrv_close($conn);
+                header("Location: ../export/csv.php");
+                exit;
+            }
             // Get the total number of records from filter.php
             $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
             $countStmt = sqlsrv_query($conn, $countSql, $params);
@@ -220,8 +220,3 @@ require "../requirements/login_check.php";
 </body>
 
 </html>
-
-<!--
-onaylı status3
-stokta status6
- -->

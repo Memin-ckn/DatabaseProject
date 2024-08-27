@@ -47,4 +47,6 @@ $whereSql = "";
 if (count($whereClauses) > 0) {
     $whereSql = "WHERE " . implode(" AND ", $whereClauses);
 }
+$_SESSION["whereSql"] = $whereSql;
+$_SESSION["params"] = $params;
 ?>

@@ -11,40 +11,8 @@ header('Expires: 0');
 
 $fp = fopen('php://output', 'w');
 
-// Build the WHERE clause
-$whereClauses = [];
-$params = [];
-
-if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
-    if ($_SESSION['username'] !== 'memin') {
-        $whereClauses[] = "CUSTOMER = ?";
-        $params[] = $_SESSION['username'];
-    }
-}
-if (isset($_GET['POTYPE']) && $_GET['POTYPE'] !== '') {
-    $whereClauses[] = "POTYPE = ?";
-    $params[] = $_GET['POTYPE'];
-}
-
-if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
-    $whereClauses[] = "PRDORDER = ?";
-    $params[] = $_GET['PRDORDER'];
-}
-
-if (isset($_GET['CLIENT']) && $_GET['CLIENT'] !== '') {
-    $whereClauses[] = "CLIENT = ?";
-    $params[] = $_GET['CLIENT'];
-}
-
-if (isset($_GET['COMPANY']) && $_GET['COMPANY'] !== '') {
-    $whereClauses[] = "COMPANY = ?";
-    $params[] = $_GET['COMPANY'];
-}
-
-$whereSql = "";
-if (count($whereClauses) > 0) {
-    $whereSql = "WHERE " . implode(" AND ", $whereClauses);
-}
+$whereSql = $_SESSION['whereSql'];
+$params = $_SESSION['params'];
 
 // Fetch data from the database
 $sql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER";
