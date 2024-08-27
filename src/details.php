@@ -77,8 +77,14 @@ require "../requirements/login_check.php";
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
             $start = ($page - 1) * $limit;
 
-            include "../requirements/filter_order.php";
+            include "../requirements/filter.php";
 
+            if (isset($_GET['export'])) {
+                $exportType = $_GET['export'];
+                sqlsrv_close($conn);
+                header("Location: ../export/csv.php");
+                exit;
+            }
             // Get the total number of records from filter.php
             $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
             $countStmt = sqlsrv_query($conn, $countSql, $params);
@@ -93,12 +99,6 @@ require "../requirements/login_check.php";
             // Calculate total pages
             $total_pages = ceil($total_records / $limit);
 
-            if (isset($_GET['export'])) {
-                $exportType = $_GET['export'];
-                sqlsrv_close($conn);
-                header("Location: ../export/csv.php");
-                exit;
-            }
             // Fetch the data with pagination (offset and fetch is used for pagination)
             $dataSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
