@@ -41,7 +41,30 @@ require "../requirements/login_check.php";
 
                         $whereSql = $whereSql . "AND CUSTOMER = " . $_SESSION['customer'];
                     }
-                    $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
+                    $countSql = "SELECT COUNT(*) AS totalorders FROM IASPRDORDER $whereSql";
+                    $countStmt = sqlsrv_query($conn, $countSql);
+
+                    if ($countStmt === false) {
+                        die(print_r(sqlsrv_errors(), true));
+                    }
+
+                    $row = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
+                    $total_records = $row['totalorders'];
+                    echo $total_records ?>
+                </p>
+
+            </div>
+            <div class="widget">
+                <h3>Total Invoices</h3>
+                <p id="total-invoice">
+                    <?php
+                    $whereSql = "WHERE ISDELETE = 0 ";
+                    // Get the total number of records that aren't deleted
+                    if ($_SESSION['customer'] !== 'memin') {
+                        $whereSql = $whereSql . "AND CUSTOMER = '" . $_SESSION['customer'] . "'";
+                    }
+
+                    $countSql = "SELECT COUNT(*) AS total FROM IASSALHEAD $whereSql";
                     $countStmt = sqlsrv_query($conn, $countSql);
 
                     if ($countStmt === false) {
@@ -50,7 +73,8 @@ require "../requirements/login_check.php";
 
                     $row = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
                     $total_records = $row['total'];
-                    echo $total_records ?>
+                    echo $total_records;
+                    ?>
                 </p>
 
             </div>
