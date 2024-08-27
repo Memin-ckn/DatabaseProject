@@ -2,9 +2,6 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
     <?php include "../requirements/styles_and_scripts.php"; ?>
 
 </head>
@@ -24,8 +21,8 @@ require "../requirements/login_check.php";
             <form method="GET" action="">
                 <ul>
                     <li>
-                        <label for="username">CUSTOMER:</label>
-                        <?php echo $_SESSION['username'] ?>
+                        <label for="customer">CUSTOMER:</label>
+                        <?php echo $_SESSION['customer'] ?>
                     </li>
                     <li>
                         <label for="POTYPE">POTYPE:</label>
@@ -77,14 +74,8 @@ require "../requirements/login_check.php";
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
             $start = ($page - 1) * $limit;
 
-            include "../requirements/filter.php";
+            include "../requirements/filter_order.php";
 
-            if (isset($_GET['export'])) {
-                $exportType = $_GET['export'];
-                sqlsrv_close($conn);
-                header("Location: ../export/csv.php");
-                exit;
-            }
             // Get the total number of records from filter.php
             $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
             $countStmt = sqlsrv_query($conn, $countSql, $params);
@@ -99,6 +90,12 @@ require "../requirements/login_check.php";
             // Calculate total pages
             $total_pages = ceil($total_records / $limit);
 
+            if (isset($_GET['export'])) {
+                $exportType = $_GET['export'];
+                sqlsrv_close($conn);
+                header("Location: ../export/csv.php");
+                exit;
+            }
             // Fetch the data with pagination (offset and fetch is used for pagination)
             $dataSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
