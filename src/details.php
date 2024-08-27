@@ -29,40 +29,11 @@ require "../requirements/login_check.php";
                         <input type="text" name="POTYPE" id="POTYPE"
                             value="<?php echo isset($_GET['POTYPE']) ? htmlspecialchars($_GET['POTYPE']) : ''; ?>">
                     </li>
-                    <li>
-
-                        <label for="PRDORDER">PRDORDER:</label>
-                        <input type="text" name="PRDORDER" id="PRDORDER"
-                            value="<?php echo isset($_GET['PRDORDER']) ? htmlspecialchars($_GET['PRDORDER']) : ''; ?>">
-                    </li>
-                    <li>
-
-                        <label for="CLIENT">CLIENT:</label>
-                        <input type="text" name="CLIENT" id="CLIENT"
-                            value="<?php echo isset($_GET['CLIENT']) ? htmlspecialchars($_GET['CLIENT']) : ''; ?>">
-                    </li>
-                    <li>
-
-                        <label for="COMPANY">COMPANY:</label>
-                        <input type="text" name="COMPANY" id="COMPANY"
-                            value="<?php echo isset($_GET['COMPANY']) ? htmlspecialchars($_GET['COMPANY']) : ''; ?>">
-                    </li>
-                    <li>
-                        <label for="STATUS3">HEPSİ:</label>
-                        <input type="radio" name="STATUS3" id="STATUS3_ALL" value="">
-                        <label for="STATUS3">ONAYLI:</label>
-                        <input type="radio" name="STATUS3" id="STATUS3_approved" value="1" <?php echo isset($_GET['STATUS3']) && $_GET['STATUS3'] === '1' ? 'checked' : ''; ?>>
-                        <label for="STATUS3">ONAYSIZ:</label>
-                        <input type="radio" name="STATUS3" id="STATUS3_unapproved" value="0" <?php echo isset($_GET['STATUS3']) && $_GET['STATUS3'] === '0' ? 'checked' : ''; ?>>
-                    </li>
+                    
                     <li>
 
                         <button type="submit">Filter</button>
                         <a href="orders.php"><button type="button">Reset</button></a>
-                    </li>
-                    <li>
-                        <!-- Export Button -->
-                        <button type="submit" name="export" value="csv">Export to CSV</button>
                     </li>
                 </ul>
             </form>
@@ -70,14 +41,14 @@ require "../requirements/login_check.php";
         <div class="widget">
             <?php
             // Set pagination parameters
-            $limit = 50;
+            $limit = 25;
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
             $start = ($page - 1) * $limit;
 
-            include "../requirements/filter_order.php";
+            include "../requirements/filter_detail.php";
 
             // Get the total number of records from filter.php
-            $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
+            $countSql = "SELECT COUNT(*) AS total FROM IASSALHEAD $whereSql";
             $countStmt = sqlsrv_query($conn, $countSql, $params);
 
             if ($countStmt === false) {
@@ -89,13 +60,7 @@ require "../requirements/login_check.php";
 
             // Calculate total pages
             $total_pages = ceil($total_records / $limit);
-
-            if (isset($_GET['export'])) {
-                $exportType = $_GET['export'];
-                sqlsrv_close($conn);
-                header("Location: ../export/csv.php");
-                exit;
-            }
+    
             // Fetch the data with pagination (offset and fetch is used for pagination)
             $dataSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -110,33 +75,6 @@ require "../requirements/login_check.php";
                 <p>Total Records:
                     <?php echo $total_records ?>
                 </p>
-
-                <?php
-                // If filtered by PRDORDER, gets details
-                if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
-                    $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql";
-                    $qtyStmt = sqlsrv_query($conn, $qtySql, $params);
-
-                    if ($qtyStmt === false) {
-                        die(print_r(sqlsrv_errors(), true));
-                    }
-
-                    if ($row = sqlsrv_fetch_array($qtyStmt, SQLSRV_FETCH_ASSOC)) {
-                        // Extract the two integer values
-                        $dlv = $row['DELIVERED'];
-                        $byq = $row['BYPRODQTY'];
-                        $totalQty = $dlv + $byq;
-                        ?>
-
-                        <p>
-                            Total quantity:
-                            <?php echo $totalQty, " kg sevk edildi."; ?>
-                        </p>
-
-                        <?php
-                    }
-                }
-                ?>
             </div>
             <table>
                 <thead>
@@ -196,7 +134,7 @@ require "../requirements/login_check.php";
                     // Fetch and display data if not already loaded
                     if (expandedContent.is(':empty')) {
                         $.ajax({
-                            url: '../requirements/fetch_order_details.php',
+                            url: '../requirements/fetch_detail_details.php',
                             type: 'GET',
                             data: { prdorder: prdOrder },
                             success: function (response) {
