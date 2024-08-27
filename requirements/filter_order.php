@@ -4,11 +4,11 @@
 $whereClauses = ["ISDELETE = ?"];
 $params = [0];
 
-// Apply the filter based on the session's username
-if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
-    if ($_SESSION['username'] !== 'memin') {
+// Apply the filter based on the session's customer
+if (isset($_SESSION['customer']) && $_SESSION['customer'] !== '') {
+    if ($_SESSION['customer'] !== 'memin') {
         $whereClauses[] = "CUSTOMER = ?";
-        $params[] = $_SESSION['username'];
+        $params[] = $_SESSION['customer'];
     }
 }
 

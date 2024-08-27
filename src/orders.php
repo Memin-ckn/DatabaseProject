@@ -24,8 +24,8 @@ require "../requirements/login_check.php";
             <form method="GET" action="">
                 <ul>
                     <li>
-                        <label for="username">CUSTOMER:</label>
-                        <?php echo $_SESSION['username'] ?>
+                        <label for="customer">CUSTOMER:</label>
+                        <?php echo $_SESSION['customer'] ?>
                     </li>
                     <li>
                         <label for="POTYPE">POTYPE:</label>

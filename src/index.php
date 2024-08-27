@@ -16,16 +16,15 @@ require "../requirements/login_check.php";
     <?php include "sidebar.php" ?>
 
     <div class="main-content">
-        <!-- Displays the username at the top -->
+        <!-- Displays the customer at the top -->
         <header>
             <h1>Welcome,
-                <!-- There isn't a real 'username' at my table so it just uses customer id -->
                 <?php
-                $username = $_SESSION["username"];
-                $nameSql = "SELECT NAME1 FROM IASSALHEAD WHERE CUSTOMER = '$username'";
+                $customer = $_SESSION["customer"];
+                $nameSql = "SELECT NAME1 FROM IASSALHEAD WHERE CUSTOMER = '$customer'";
                 $nameStmt = sqlsrv_query($conn, $nameSql);
                 if ($nameStmt === false) {
-                    echo ($_SESSION['username']);
+                    echo ($_SESSION['$customer']);
                 } else {
                     $name = sqlsrv_fetch_array($nameStmt, SQLSRV_FETCH_ASSOC);
                     echo $name['NAME1'];
@@ -41,9 +40,9 @@ require "../requirements/login_check.php";
                     <?php
                     $whereSql = "WHERE ISDELETE = 0 ";
                     // Get the total number of records that aren't deleted
-                    if ($_SESSION['username'] !== 'memin') {
+                    if ($_SESSION['customer'] !== 'memin') {
 
-                        $whereSql = $whereSql . "AND CUSTOMER = " . $_SESSION['username'];
+                        $whereSql = $whereSql . "AND CUSTOMER = " . $_SESSION['customer'];
                     }
                     $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
                     $countStmt = sqlsrv_query($conn, $countSql);

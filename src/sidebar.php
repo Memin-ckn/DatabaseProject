@@ -1,5 +1,5 @@
 <div class="sidebar">
-    <h2>Admin Dashboard</h2>
+    <h2>Dashboard</h2>
     <ul>
         <li><a href="index.php">Dashboard</a></li>
         <li><a href="orders.php">Orders</a></li>

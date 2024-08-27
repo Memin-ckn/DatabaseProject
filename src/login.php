@@ -18,7 +18,7 @@
             </div>
         <?php endif; ?>
         <form action="login.php" method="post">
-            <input type="text" name="username" placeholder="Username" required>
+            <input type="text" name="customer" placeholder="Customer ID" required>
             <input type="password" name="password" placeholder="Password" required>
             <input type="submit" name="opr" value="Login">
             <input type="submit" name="opr" value="Register">
@@ -27,20 +27,20 @@
         require "../requirements/connection.php";
         error_reporting(E_ERROR | E_PARSE);
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $username = $_POST['username'];
+            $customer = $_POST['customer'];
             $password = $_POST['password'];
             $opr = $_POST['opr'];
 
             if ($opr === 'Register') {
-                // Check if the username exists in IASPRDORDER
+                // Check if the customer exists in IASPRDORDER
                 $checkUserSql = "SELECT * FROM IASPRDORDER WHERE CUSTOMER = ?";
-                $checkUserStmt = sqlsrv_prepare($conn, $checkUserSql, [$username]);
+                $checkUserStmt = sqlsrv_prepare($conn, $checkUserSql, [$customer]);
                 sqlsrv_execute($checkUserStmt);
 
                 if (sqlsrv_fetch_array($checkUserStmt, SQLSRV_FETCH_ASSOC)) {
-                    // Check if the username already exists in USERS
+                    // Check if the customer already exists in USERS
                     $checkUserInUsersSql = "SELECT * FROM SESAUSERS WHERE USERNAME = ?";
-                    $checkUserInUsersStmt = sqlsrv_prepare($conn, $checkUserInUsersSql, [$username]);
+                    $checkUserInUsersStmt = sqlsrv_prepare($conn, $checkUserInUsersSql, [$customer]);
                     sqlsrv_execute($checkUserInUsersStmt);
 
                     if (sqlsrv_fetch_array($checkUserInUsersStmt, SQLSRV_FETCH_ASSOC)) {
@@ -65,7 +65,7 @@
 
                         // Add username and password to USERS
                         $addUserSql = "INSERT INTO SESAUSERS (ID, USERNAME, PASSWORD) VALUES (?, ?, ?)";
-                        $addUserStmt = sqlsrv_prepare($conn, $addUserSql, [$highestId + 1, $username, $password]);
+                        $addUserStmt = sqlsrv_prepare($conn, $addUserSql, [$highestId + 1, $customer, $password]);
                         if (sqlsrv_execute($addUserStmt)) {
                             echo 'Registration successful!';
                             exit();
@@ -74,7 +74,7 @@
                         }
                     }
                 } else {
-                    echo 'Username not found in IASPRDORDER';
+                    echo 'Custoemr not found in IASPRDORDER';
                 }
 
                 // Close the statements
@@ -84,16 +84,16 @@
             } else {
                 // Handle login
                 $loginSql = "SELECT * FROM SESAUSERS WHERE USERNAME = ? AND PASSWORD = ?";
-                $loginStmt = sqlsrv_prepare($conn, $loginSql, [$username, $password]);
+                $loginStmt = sqlsrv_prepare($conn, $loginSql, [$customer, $password]);
                 sqlsrv_execute($loginStmt);
 
                 if (sqlsrv_fetch_array($loginStmt, SQLSRV_FETCH_ASSOC)) {
                     // Successful login
-                    $_SESSION['username'] = $username;
+                    $_SESSION['customer'] = $customer;
                     header("Location: index.php"); // Redirect to the main page
                     exit();
                 } else {
-                    echo 'Invalid username or password';
+                    echo 'Invalid customer id or password';
                 }
 
                 sqlsrv_free_stmt($loginStmt);
