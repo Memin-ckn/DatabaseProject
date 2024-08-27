@@ -20,7 +20,18 @@ require "../requirements/login_check.php";
         <header>
             <h1>Welcome,
                 <!-- There isn't a real 'username' at my table so it just uses customer id -->
-                <?php echo ($_SESSION['username']); ?>
+                <?php
+                $username = $_SESSION["username"];
+                $nameSql = "SELECT NAME1 FROM IASSALHEAD WHERE CUSTOMER = '$username'";
+                $nameStmt = sqlsrv_query($conn, $nameSql);
+                if ($nameStmt === false) {
+                    echo ($_SESSION['username']);
+                    die(print_r(sqlsrv_errors(), true));
+                } else {
+                    $name = sqlsrv_fetch_array($nameStmt, SQLSRV_FETCH_ASSOC);
+                    echo $name['NAME1'];
+                }
+                ?>
             </h1>
         </header>
 
