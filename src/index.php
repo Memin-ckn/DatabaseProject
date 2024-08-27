@@ -26,7 +26,6 @@ require "../requirements/login_check.php";
                 $nameStmt = sqlsrv_query($conn, $nameSql);
                 if ($nameStmt === false) {
                     echo ($_SESSION['username']);
-                    die(print_r(sqlsrv_errors(), true));
                 } else {
                     $name = sqlsrv_fetch_array($nameStmt, SQLSRV_FETCH_ASSOC);
                     echo $name['NAME1'];
