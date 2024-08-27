@@ -72,7 +72,6 @@ require "../requirements/login_check.php";
         </div>
         <div class="widget">
             <?php
-
             if (isset($_GET['export'])) {
                 $exportType = $_GET['export'];
                 sqlsrv_close($conn);
@@ -86,7 +85,7 @@ require "../requirements/login_check.php";
 
             include "../requirements/filter.php";
 
-            // Get the total number of records
+            // Get the total number of records from filter.php
             $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
             $countStmt = sqlsrv_query($conn, $countSql, $params);
 
@@ -100,7 +99,7 @@ require "../requirements/login_check.php";
             // Calculate total pages
             $total_pages = ceil($total_records / $limit);
 
-            // Fetch the data with pagination
+            // Fetch the data with pagination (offset and fetch is used for pagination)
             $dataSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
             $dataParams = array_merge($params, [$start, $limit]);
@@ -111,13 +110,12 @@ require "../requirements/login_check.php";
             }
             ?>
             <div class="widget">
-
-                <p>
-                    Total Records:
+                <p>Total Records:
                     <?php echo $total_records ?>
                 </p>
 
                 <?php
+                // If filtered by PRDORDER, gets details
                 if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
                     $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql";
                     $qtyStmt = sqlsrv_query($conn, $qtySql, $params);
@@ -133,7 +131,8 @@ require "../requirements/login_check.php";
                         $totalQty = $dlv + $byq;
                         ?>
 
-                        <p>Total quantity:
+                        <p>
+                            Total quantity:
                             <?php echo $totalQty, " kg sevk edildi."; ?>
                         </p>
 

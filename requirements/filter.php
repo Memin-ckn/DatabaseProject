@@ -1,7 +1,8 @@
 <?php
 // Initialize the WHERE clause
-$whereClauses = [];
-$params = [];
+// Exclude deleted orders if ISDELETE is not set in the GET parameters
+$whereClauses = ["ISDELETE = ?"];
+$params = [0];
 
 // Apply the filter based on the session's username
 if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
@@ -9,12 +10,6 @@ if (isset($_SESSION['username']) && $_SESSION['username'] !== '') {
         $whereClauses[] = "CUSTOMER = ?";
         $params[] = $_SESSION['username'];
     }
-}
-
-// Exclude deleted orders if ISDELETE is not set in the GET parameters
-if (!isset($_GET['ISDELETE'])) {
-    $whereClauses[] = "ISDELETE = ?";
-    $params[] = 0;
 }
 
 // Apply the POTYPE filter

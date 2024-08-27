@@ -16,13 +16,13 @@ require "../requirements/login_check.php";
     <?php include "sidebar.php" ?>
 
     <div class="main-content">
+        <!-- Displays the username at the top -->
         <header>
             <h1>Welcome,
+                <!-- There isn't a real 'username' at my table so it just uses customer id -->
                 <?php echo ($_SESSION['username']); ?>
             </h1>
         </header>
-
-
 
         <div class="widgets">
             <div class="widget">
@@ -30,7 +30,7 @@ require "../requirements/login_check.php";
                 <p id="total-orders">
                     <?php
                     $whereSql = "WHERE ISDELETE = 0 ";
-                    // Get the total number of records
+                    // Get the total number of records that aren't deleted
                     if ($_SESSION['username'] !== 'memin') {
 
                         $whereSql = $whereSql . "AND CUSTOMER = " . $_SESSION['username'];
@@ -47,24 +47,9 @@ require "../requirements/login_check.php";
                     echo $total_records ?>
                 </p>
 
-
-            </div>
-            <div class="widget">
-                <h3>Total Departments</h3>
-                <p id="total-departments">
-                    0
-                </p>
-            </div>
-            <div class="widget">
-                <h3> Total Roles</h3>
-                <p id="total-roles">
-                    0
-                </p>
             </div>
         </div>
-
     </div>
-
 
     <?php sqlsrv_close($conn); ?>
 </body>

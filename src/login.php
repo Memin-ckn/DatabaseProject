@@ -25,12 +25,11 @@
         </form>
         <?php
         require "../requirements/connection.php";
-
+        error_reporting(E_ERROR | E_PARSE);
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $username = $_POST['username'];
             $password = $_POST['password'];
             $opr = $_POST['opr'];
-
 
             if ($opr === 'Register') {
                 // Check if the username exists in IASPRDORDER
@@ -66,7 +65,7 @@
 
                         // Add username and password to USERS
                         $addUserSql = "INSERT INTO SESAUSERS (ID, USERNAME, PASSWORD) VALUES (?, ?, ?)";
-                        $addUserStmt = sqlsrv_prepare($conn, $addUserSql, [$highestId+1,$username, $password]);
+                        $addUserStmt = sqlsrv_prepare($conn, $addUserSql, [$highestId + 1, $username, $password]);
                         if (sqlsrv_execute($addUserStmt)) {
                             echo 'Registration successful!';
                             exit();
@@ -103,7 +102,6 @@
 
         sqlsrv_close($conn);
         ?>
-
 
     </div>
 
