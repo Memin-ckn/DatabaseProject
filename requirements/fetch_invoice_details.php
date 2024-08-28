@@ -12,11 +12,27 @@
 <?php
 require "connection.php";
 if (isset($_GET['docnum'])) {
-    $docNum = $_GET['docnum'];
+    $whereClauses = ["ISDELETE = ?"];
+    $params = [0];
+    if (isset($_SESSION['customer']) && $_SESSION['customer'] !== '') {
+        if ($_SESSION['customer'] !== 'memin') {
+            $whereClauses[] = "CUSTOMER = ?";
+            $params[] = $_SESSION['customer'];
+        }
+    }
+    if (isset($_GET['DOCNUM']) && $_GET['DOCNUM'] !== '') {
+        $whereClauses[] = "DOCNUM = ?";
+        $params[] = $_GET['DOCNUM'];
+    }
+    $whereSql = "";
+    if (count($whereClauses) > 0) {
+        $whereSql = "WHERE " . implode(" AND ", $whereClauses);
+    }
+
 
     // Fetch all columns for the selected DOCNUM
-    $sql = "SELECT DOCTYPE, DOCNUM, NAME1, CURRENCY, TELNUM, FAXNUM, TAXNUM, GROSS, SUBTOTAL, GRANDTOTAL FROM IASSALHEAD WHERE CUSTOMER = ? AND DOCNUM = ?";
-    $stmt = sqlsrv_query($conn, $sql, [$_SESSION['customer'], $docNum]);
+    $sql = "SELECT DOCTYPE, DOCNUM, NAME1, CURRENCY, TELNUM, FAXNUM, TAXNUM, GROSS, SUBTOTAL, GRANDTOTAL FROM IASSALHEAD $whereSql";
+    $stmt = sqlsrv_query($conn, $sql, $params);
 
     if ($stmt === false) {
         die(print_r(sqlsrv_errors(), true));
@@ -29,6 +45,7 @@ if (isset($_GET['docnum'])) {
         }
         echo "</ul>";
     } else {
+        echo $_SESSION['customer'];
         echo "No details found for DOCNUM: " . htmlspecialchars($docNum);
     }
 
