@@ -12,25 +12,25 @@ if (isset($_SESSION['customer']) && $_SESSION['customer'] !== '') {
     }
 }
 
-// Apply the POTYPE filter
-if (isset($_GET['DOCTYPE']) && $_GET['DOCTYPE'] !== '') {
-    $whereClauses[] = "DOCTYPE = ?";
-    $params[] = $_GET['DOCTYPE'];
-}
-
-// Apply the PRDORDER filter
+// Apply the DOCNUM filter
 if (isset($_GET['DOCNUM']) && $_GET['DOCNUM'] !== '') {
     $whereClauses[] = "DOCNUM = ?";
     $params[] = $_GET['DOCNUM'];
 }
 
-// Apply the CLIENT filter
+// Apply the NAME1 filter
 if (isset($_GET['NAME1']) && $_GET['NAME1'] !== '') {
     $whereClauses[] = "NAME1 = ?";
     $params[] = $_GET['NAME1'];
 }
 
-// Apply the COMPANY filter
+// Apply the CITY filter
+if (isset($_GET['CITY']) && $_GET['CITY'] !== '') {
+    $whereClauses[] = "CITY = ?";
+    $params[] = $_GET['CITY'];
+}
+
+// Apply the TELNUM filter
 if (isset($_GET['TELNUM']) && $_GET['TELNUM'] !== '') {
     $whereClauses[] = "TELNUM = ?";
     $params[] = $_GET['TELNUM'];

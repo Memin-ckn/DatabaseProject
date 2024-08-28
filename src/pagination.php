@@ -6,7 +6,7 @@
         <?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">
             << </a>
                 <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
-                    << /a>
+                    <</a>
                     <?php endif; ?>
 
                     <!-- Not first page -->

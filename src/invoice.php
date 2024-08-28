@@ -25,15 +25,15 @@ require "../requirements/login_check.php";
                         <?php echo $_SESSION['customer'] ?>
                     </li>
                     <li>
-                        <label for="POTYPE">POTYPE:</label>
-                        <input type="text" name="POTYPE" id="POTYPE"
-                            value="<?php echo isset($_GET['POTYPE']) ? htmlspecialchars($_GET['POTYPE']) : ''; ?>">
+                        <label for="DOCNUM">DOCNUM:</label>
+                        <input type="text" name="DOCNUM" id="DOCNUM"
+                            value="<?php echo isset($_GET['DOCNUM']) ? htmlspecialchars($_GET['DOCNUM']) : ''; ?>">
                     </li>
                     
                     <li>
 
                         <button type="submit">Filter</button>
-                        <a href="orders.php"><button type="button">Reset</button></a>
+                        <a href="invoice.php"><button type="button">Reset</button></a>
                     </li>
                 </ul>
             </form>
@@ -62,7 +62,7 @@ require "../requirements/login_check.php";
             $total_pages = ceil($total_records / $limit);
     
             // Fetch the data with pagination (offset and fetch is used for pagination)
-            $dataSql = "SELECT DOCTYPE, DOCNUM, NAME1, TELNUM FROM IASSALHEAD $whereSql ORDER BY DOCNUM OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+            $dataSql = "SELECT DOCNUM, NAME1, CITY, TELNUM FROM IASSALHEAD $whereSql ORDER BY DOCNUM OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
             $dataParams = array_merge($params, [$start, $limit]);
             $dataStmt = sqlsrv_query($conn, $dataSql, $dataParams);
@@ -79,9 +79,9 @@ require "../requirements/login_check.php";
             <table>
                 <thead>
                     <tr>
-                        <th>DOCTYPE</th>
                         <th>DOCNUM</th>
                         <th>NAME1</th>
+                        <th>CITY</th>
                         <th>TELNUM</th>
                     </tr>
                 </thead>
@@ -90,13 +90,13 @@ require "../requirements/login_check.php";
                         <tr class="clickable-row" data-docnum="<?php echo htmlspecialchars($row['DOCNUM']); ?>">
                             <td>
                                 <i class="fa-solid fa-plus" style="color: #65e692; cursor: pointer;"></i>
-                                <?php echo htmlspecialchars($row['DOCTYPE']); ?>
-                            </td>
-                            <td>
                                 <?php echo htmlspecialchars($row['DOCNUM']); ?>
                             </td>
                             <td>
                                 <?php echo htmlspecialchars($row['NAME1']); ?>
+                            </td>
+                            <td>
+                                <?php echo htmlspecialchars($row['CITY']); ?>
                             </td>
                             <td>
                                 <?php echo htmlspecialchars($row['TELNUM']); ?>
@@ -123,7 +123,7 @@ require "../requirements/login_check.php";
             $('.clickable-row i').on('click', function (e) {
                 e.stopPropagation(); // Prevent the event from bubbling up to the row
 
-                var prdOrder = $(this).closest('.clickable-row').data('prdorder');
+                var docnum = $(this).closest('.clickable-row').data('docnum');
                 var expandableRow = $(this).closest('.clickable-row').next('.expandable-row');
                 var expandedContent = expandableRow.find('.expanded-content');
 
@@ -134,9 +134,9 @@ require "../requirements/login_check.php";
                     // Fetch and display data if not already loaded
                     if (expandedContent.is(':empty')) {
                         $.ajax({
-                            url: '../requirements/fetch_detail_details.php',
+                            url: '../requirements/fetch_invoice_details.php',
                             type: 'GET',
-                            data: { prdorder: prdOrder },
+                            data: { docnum: docnum },
                             success: function (response) {
                                 expandedContent.html(response);
                                 expandableRow.show(); // Expand the row to show content
