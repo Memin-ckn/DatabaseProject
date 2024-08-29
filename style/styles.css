@@ -243,6 +243,9 @@ td {
   position: relative;
   width: 100%;
 }
+input:disabled{
+  background-color: inherit;
+}
 
 .ic1 {
   margin-top: 40px;

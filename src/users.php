@@ -75,7 +75,7 @@ require "../requirements/login_check.php";
                             <td>
                                 <i class="eye fa-solid fa-eye" style="color: #9707da; cursor: pointer"
                                     onclick="showPsw(this)"></i>
-                                <input type="password" name="userpsw" class="userpsw"
+                                <input disabled type="password" name="userpsw" class="userpsw"
                                     value="<?php echo htmlspecialchars($row['PASSWORD']); ?>">
                             </td>
                         </tr>
