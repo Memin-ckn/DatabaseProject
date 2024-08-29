@@ -68,9 +68,9 @@ require "../requirements/login_check.php";
                                 <?php echo htmlspecialchars($row['USERNAME']); ?>
                             </td>
                             <td>
-                                <i id="eye" class="fa-solid fa-eye" style="color: #9707da; cursor: pointer"
-                                    onclick="showPsw()"></i>
-                                <input type="password" name="userpsw" id="userpsw"
+                                <i class="eye fa-solid fa-eye" style="color: #9707da; cursor: pointer"
+                                    onclick="showPsw(this)"></i>
+                                <input type="password" name="userpsw" class="userpsw"
                                     value="<?php echo htmlspecialchars($row['PASSWORD']); ?>">
                             </td>
                         </tr>
@@ -82,15 +82,17 @@ require "../requirements/login_check.php";
     </div>
     <?php sqlsrv_close($conn); ?>
     <script>
-        function showPsw() {
-            var x = document.getElementById("userpsw");
-            var y = document.getElementById("eye");
-            if (x.type === "password") {
-                x.type = "text";
-                y.className = "fa-solid fa-eye-slash"
+        function showPsw(element) {
+            var row = element.closest('tr'); // Find the closest row
+            var input = row.querySelector('.userpsw'); // Get the input in this row
+            var eyeIcon = row.querySelector('.eye'); // Get the eye icon in this row
+
+            if (input.type === "password") {
+                input.type = "text";
+                eyeIcon.className = "eye fa-solid fa-eye-slash";
             } else {
-                x.type = "password";
-                y.className = "fa-solid fa-eye"
+                input.type = "password";
+                eyeIcon.className = "eye fa-solid fa-eye";
             }
         }
     </script>
