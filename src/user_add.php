@@ -76,9 +76,6 @@
         }
         sqlsrv_close($conn);
         ?>
-
-
-
     </div>
 
 </body>
