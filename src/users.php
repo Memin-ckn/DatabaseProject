@@ -14,6 +14,11 @@ require "../requirements/login_check.php";
     <?php include "sidebar.php" ?>
 
     <div class="main-content">
+        <div class="widgets">
+            <a href="user_add.php" class="widgetButton">Add User</a>
+            <a href="user_delete.php" class="widgetButton">Delete User</a>
+            <a href="user_edit.php" class="widgetButton">Edit User</a>
+        </div>
         <div class="widget">
             <?php
             // Set pagination parameters

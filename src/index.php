@@ -20,8 +20,8 @@ require "../requirements/login_check.php";
                 $customer = $_SESSION["customer"];
                 $nameSql = "SELECT NAME1 FROM IASSALHEAD WHERE CUSTOMER = '$customer'";
                 $nameStmt = sqlsrv_query($conn, $nameSql);
-                if ($nameStmt === false) {
-                    echo ($_SESSION['$customer']);
+                if ($nameStmt === false || $customer ==='memin') {
+                    echo ($customer);
                 } else {
                     $name = sqlsrv_fetch_array($nameStmt, SQLSRV_FETCH_ASSOC);
                     echo $name['NAME1'];

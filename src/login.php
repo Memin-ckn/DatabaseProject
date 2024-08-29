@@ -74,7 +74,7 @@
                         }
                     }
                 } else {
-                    echo 'Custoemr not found in IASPRDORDER';
+                    echo 'Customer not found in IASPRDORDER';
                 }
 
                 // Close the statements

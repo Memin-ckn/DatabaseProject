@@ -149,6 +149,7 @@ header .profile img {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .widget {
@@ -337,4 +338,33 @@ td {
   -ms-user-select: none;
   user-select: none;
 
+}
+
+.widgetButton {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 250px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  align-content: center;
+  text-align: center;
+  color: #7d5ba6;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+.widgetButton:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.widgetButton a {
+  text-decoration: none;
+}
+.widgetButton a::after {
+  text-decoration: none;
+  
 }
