@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add</title>
-    <link rel="stylesheet" href="../style/login_style.css">
     <?php
+    require "../requirements/styles_and_scripts.php";
     require "../requirements/connection.php";
     require "../requirements/login_check.php";
     ?>
@@ -14,17 +14,34 @@
 
 <body>
 
+    <?php require "sidebar.php" ?>
 
-    <div class="login-container">
-        <form action="" method="post">
-            <input type="text" name="customer" placeholder="Customer ID" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="password" name="password2" placeholder="Password Again" required>
-            <input style="background-color: #7d5ba6;" type="submit" value="Add User">
-        </form>
-        <form action="users.php">
-            <input style="background-color: #7d5ba6;" type="submit" value="Back">
-        </form>
+    <div class="main-content">
+        <div class="widget form">
+
+            <form action="" method="post">
+                <ul>
+                    <li>
+                        <label for="customer">CUSTOMER ID</label>
+                        <input type="text" name="customer" placeholder="Customer ID" required>
+                    </li>
+                    <li>
+                        <label for="password">PASSWORD</label>
+                        <input type="password" name="password" placeholder="Password" required>
+                    </li>
+                    <li>
+                        <label for="password2">PASSWORD AGAIN</label>
+                        <input type="password" name="password2" placeholder="Password Again" required>
+                    </li>
+                    <li>
+                        <button type="submit">Add User</button>
+                    </li>
+                </ul>
+            </form>
+            <form action="users.php">
+                <button type="submit">Back</button>
+            </form>
+        </div>
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($_POST['password'] !== $_POST['password2']) {
@@ -76,6 +93,7 @@
         }
         sqlsrv_close($conn);
         ?>
+
     </div>
 
 </body>

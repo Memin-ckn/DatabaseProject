@@ -6,11 +6,13 @@ require "../requirements/styles_and_scripts.php";
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User</title>
 </head>
+
 <body>
     <?php include "sidebar.php"; ?>
     <div class="main-content">
@@ -31,6 +33,9 @@ require "../requirements/styles_and_scripts.php";
                         <button type="submit">Filter</button>
                     </li>
                 </ul>
+            </form>
+            <form action="users.php">
+                <button type="submit">Back</button>
             </form>
         </div>
 
@@ -152,4 +157,5 @@ require "../requirements/styles_and_scripts.php";
 
     <?php sqlsrv_close($conn); ?>
 </body>
+
 </html>
