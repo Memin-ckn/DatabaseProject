@@ -33,11 +33,11 @@
                 </ul>
             </form>
         </div>
+
         <?php
         // Initialize the WHERE clause
         $whereClauses = [];
         $params = [];
-
 
         // Apply the ID filter
         if (isset($_GET['ID']) && $_GET['ID'] !== '') {
@@ -69,53 +69,50 @@
 
         if ($dataStmt === false) {
             die(print_r(sqlsrv_errors(), true));
-        } else if (count($whereClauses) > 0) {
-            echo
-                "<div class='widget'>
+        } else {
+            echo "<div class='widget'>
                     <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>USERNAME</th>
-                        <th>PASSWORD</th>
-                    </tr>
-                </thead>
-                <tbody>";
-            while ($row = sqlsrv_fetch_array($dataStmt, SQLSRV_FETCH_ASSOC)): ?>
-                    <tr>
-                        <td>
-                        <?php echo htmlspecialchars($row['ID']); ?>
-                        </td>
-                        <td>
-                        <?php echo htmlspecialchars($row['USERNAME']); ?>
-                        </td>
-                        <td>
-                        <?php echo htmlspecialchars($row['PASSWORD']); ?>
-                        </td>
-                    </tr>
-                    </tbody>
-                    </table>
-            <?php endwhile; ?>
-                <div class="widget form">
-                    <form action="" method="post">
-                        <ul>
-                            <li>
-                                <label for="newID">New ID:</label>
-                                <input type="text" name="newID" id="newID" value="">
-                            </li>
-                            <li>
-                                <label for="newPASSWORD">New Password:</label>
-                                <input type="password" name="newPASSWORD" id="newPASSWORD" value="">
-                            </li>
-                            <li>
-                                <button type="submit">Change</button>
-                            </li>
-                        </ul>
-                    </form>
-                </div>
-            <?php
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>USERNAME</th>
+                            <th>PASSWORD</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+            $hasData = false;
+            while ($row = sqlsrv_fetch_array($dataStmt, SQLSRV_FETCH_ASSOC)) {
+                $hasData = true;
+                echo "<tr>
+                        <td>" . htmlspecialchars($row['ID']) . "</td>
+                        <td>" . htmlspecialchars($row['USERNAME']) . "</td>
+                        <td>" . htmlspecialchars($row['PASSWORD']) . "</td>
+                      </tr>";
+            }
+            echo "</tbody></table></div>";
+
+            // Display the form only if there's data
+            if ($hasData) {
+                echo "<div class='widget form'>
+                        <form action='' method='post'>
+                            <ul>
+                                <li>
+                                    <label for='newID'>New ID:</label>
+                                    <input type='text' name='newID' id='newID' value=''>
+                                </li>
+                                <li>
+                                    <label for='newPASSWORD'>New Password:</label>
+                                    <input type='password' name='newPASSWORD' id='newPASSWORD' value=''>
+                                </li>
+                                <li>
+                                    <button type='submit'>Change</button>
+                                </li>
+                            </ul>
+                        </form>
+                      </div>";
+            }
         }
-        $params = [];
+
         // Handle the POST request to update the user information
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $newID = isset($_POST['newID']) ? $_POST['newID'] : null;
@@ -124,33 +121,31 @@
             if ($newPASSWORD) {
                 // Update the password in the table
                 $updatePasswordSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE ID = ?";
-                $params[] = $newPASSWORD;
-                $params[] = $oldID;
+                $params = [$newPASSWORD, $oldID];
                 $updatePasswordStmt = sqlsrv_query($conn, $updatePasswordSql, $params);
                 if ($updatePasswordStmt === false) {
                     die(print_r(sqlsrv_errors(), true));
                 } else {
-                    echo "Password updated successfully!\n";
+                    echo " Password updated successfully!\n";
                 }
             }
-            $params = [];
+
             if ($newID) {
                 // Check if the new ID already exists in the table
                 $checkIDSql = "SELECT ID FROM SESAUSERS WHERE ID = ?";
-                $checkIDStmt = sqlsrv_query($conn, $checkIDSql, [$newID]);
+                $checkIDStmt = sqlsrv_query($conn,$checkIDSql, [$newID]);
                 if (sqlsrv_fetch_array($checkIDStmt, SQLSRV_FETCH_ASSOC)) {
                     echo "The new ID already exists. Please choose a different ID.";
                 } else {
                     // Update the ID in the table
                     $updateIDSql = "UPDATE SESAUSERS SET ID = ? WHERE ID = ?";
-                    $params[] = $newID;
-                    $params[] = $oldID;
+                    $params = [$newID, $oldID];
                     $updateIDStmt = sqlsrv_query($conn, $updateIDSql, $params);
                     if ($updateIDStmt === false) {
                         echo "$newID, $newPASSWORD";
                         die(print_r(sqlsrv_errors(), true));
                     } else {
-                        echo "ID updated successfully!\n";
+                        echo " ID updated successfully!\n";
                     }
                 }
             }
@@ -158,9 +153,7 @@
         ?>
     </div>
 
-    </div>
     <?php sqlsrv_close($conn); ?>
-    </div>
 
 </body>
 
