@@ -38,16 +38,24 @@
         $whereClauses = [];
         $params = [];
 
+
         // Apply the ID filter
         if (isset($_GET['ID']) && $_GET['ID'] !== '') {
+            $oldID = $_GET['ID'];
             $whereClauses[] = "ID = ?";
-            $params[] = $_GET['ID'];
+            $params[] = $oldID;
         }
 
         // Apply the USERNAME filter
         if (isset($_GET['USERNAME']) && $_GET['USERNAME'] !== '') {
             $whereClauses[] = "USERNAME = ?";
             $params[] = $_GET['USERNAME'];
+            if (!isset($oldID)) {
+                $oldIDSql = "SELECT ID FROM SESAUSERS WHERE USERNAME = ?";
+                $oldIDStmt = sqlsrv_query($conn, $oldIDSql, [$_GET['USERNAME']]);
+                $row = sqlsrv_fetch_array($oldIDStmt, SQLSRV_FETCH_ASSOC);
+                $oldID = $row['ID'];
+            }
         }
 
         // Build the WHERE SQL clause
@@ -56,7 +64,6 @@
             $whereSql = "WHERE " . implode(" AND ", $whereClauses);
         }
 
-        // Fetch the data with pagination (offset and fetch is used for pagination)
         $dataSql = "SELECT ID, USERNAME, PASSWORD FROM SESAUSERS $whereSql";
         $dataStmt = sqlsrv_query($conn, $dataSql, $params);
 
@@ -118,12 +125,12 @@
                 // Update the password in the table
                 $updatePasswordSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE ID = ?";
                 $params[] = $newPASSWORD;
-                $params[] = $_GET['ID'];
+                $params[] = $oldID;
                 $updatePasswordStmt = sqlsrv_query($conn, $updatePasswordSql, $params);
                 if ($updatePasswordStmt === false) {
                     die(print_r(sqlsrv_errors(), true));
                 } else {
-                    echo "Password updated successfully!";
+                    echo "Password updated successfully!\n";
                 }
             }
             $params = [];
@@ -137,20 +144,18 @@
                     // Update the ID in the table
                     $updateIDSql = "UPDATE SESAUSERS SET ID = ? WHERE ID = ?";
                     $params[] = $newID;
-                    $params[] = $_GET['ID'];
+                    $params[] = $oldID;
                     $updateIDStmt = sqlsrv_query($conn, $updateIDSql, $params);
                     if ($updateIDStmt === false) {
                         echo "$newID, $newPASSWORD";
                         die(print_r(sqlsrv_errors(), true));
                     } else {
-                        echo "ID updated successfully!";
+                        echo "ID updated successfully!\n";
                     }
                 }
             }
-
         }
         ?>
-
     </div>
 
     </div>
