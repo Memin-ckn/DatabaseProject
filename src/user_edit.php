@@ -1,19 +1,19 @@
+<?php
+require "../requirements/connection.php";
+require "../requirements/login_check.php";
+require "../requirements/styles_and_scripts.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User</title>
-    <?php
-    require "../requirements/connection.php";
-    require "../requirements/login_check.php";
-    require "../requirements/styles_and_scripts.php";
-    ?>
 </head>
-
 <body>
-    <div class="main-content" style="margin-left: 0; width: 100%; overflow-y: hidden;">
+    <?php include "sidebar.php"; ?>
+    <div class="main-content">
         <div class="widget form">
             <form action="" method="get">
                 <ul>
@@ -54,22 +54,21 @@
                 $oldIDSql = "SELECT ID FROM SESAUSERS WHERE USERNAME = ?";
                 $oldIDStmt = sqlsrv_query($conn, $oldIDSql, [$_GET['USERNAME']]);
                 $row = sqlsrv_fetch_array($oldIDStmt, SQLSRV_FETCH_ASSOC);
-                $oldID = $row['ID'];
+                $oldID = $row['ID'] ?? null; // Handle cases where USERNAME is not found
             }
         }
 
-        // Build the WHERE SQL clause
-        $whereSql = "";
+        // Display the table only if a filter is applied
         if (count($whereClauses) > 0) {
             $whereSql = "WHERE " . implode(" AND ", $whereClauses);
-        }
+            $dataSql = "SELECT ID, USERNAME, PASSWORD FROM SESAUSERS $whereSql";
+            $dataStmt = sqlsrv_query($conn, $dataSql, $params);
 
-        $dataSql = "SELECT ID, USERNAME, PASSWORD FROM SESAUSERS $whereSql";
-        $dataStmt = sqlsrv_query($conn, $dataSql, $params);
+            if ($dataStmt === false) {
+                die(print_r(sqlsrv_errors(), true));
+            }
 
-        if ($dataStmt === false) {
-            die(print_r(sqlsrv_errors(), true));
-        } else {
+            // Display the table
             echo "<div class='widget'>
                     <table>
                     <thead>
@@ -80,6 +79,7 @@
                         </tr>
                     </thead>
                     <tbody>";
+
             $hasData = false;
             while ($row = sqlsrv_fetch_array($dataStmt, SQLSRV_FETCH_ASSOC)) {
                 $hasData = true;
@@ -89,9 +89,10 @@
                         <td>" . htmlspecialchars($row['PASSWORD']) . "</td>
                       </tr>";
             }
+
             echo "</tbody></table></div>";
 
-            // Display the form only if there's data
+            // Display the form only if the table has data
             if ($hasData) {
                 echo "<div class='widget form'>
                         <form action='' method='post'>
@@ -119,7 +120,6 @@
             $newPASSWORD = isset($_POST['newPASSWORD']) ? $_POST['newPASSWORD'] : null;
 
             if ($newPASSWORD) {
-                // Update the password in the table
                 $updatePasswordSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE ID = ?";
                 $params = [$newPASSWORD, $oldID];
                 $updatePasswordStmt = sqlsrv_query($conn, $updatePasswordSql, $params);
@@ -131,18 +131,15 @@
             }
 
             if ($newID) {
-                // Check if the new ID already exists in the table
                 $checkIDSql = "SELECT ID FROM SESAUSERS WHERE ID = ?";
-                $checkIDStmt = sqlsrv_query($conn,$checkIDSql, [$newID]);
+                $checkIDStmt = sqlsrv_query($conn, $checkIDSql, [$newID]);
                 if (sqlsrv_fetch_array($checkIDStmt, SQLSRV_FETCH_ASSOC)) {
                     echo "The new ID already exists. Please choose a different ID.";
                 } else {
-                    // Update the ID in the table
                     $updateIDSql = "UPDATE SESAUSERS SET ID = ? WHERE ID = ?";
                     $params = [$newID, $oldID];
                     $updateIDStmt = sqlsrv_query($conn, $updateIDSql, $params);
                     if ($updateIDStmt === false) {
-                        echo "$newID, $newPASSWORD";
                         die(print_r(sqlsrv_errors(), true));
                     } else {
                         echo " ID updated successfully!\n";
@@ -154,7 +151,5 @@
     </div>
 
     <?php sqlsrv_close($conn); ?>
-
 </body>
-
 </html>
