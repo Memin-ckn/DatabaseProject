@@ -32,7 +32,7 @@
         </header>
         <div class="widget">
             <?php
-            $infoSql = "SELECT ID, USERNAME, PASSWORD FROM SESAUSERS WHERE USERNAME = ?";
+            $infoSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS WHERE USERNAME = ?";
             $infoStmt = sqlsrv_query($conn, $infoSql, [$customer]);
 
             if ($infoStmt === false) {
@@ -42,7 +42,6 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>USERNAME</th>
                         <th>PASSWORD</th>
                     </tr>
@@ -50,9 +49,6 @@
                 <tbody>
                     <?php while ($row = sqlsrv_fetch_array($infoStmt, SQLSRV_FETCH_ASSOC)): ?>
                         <tr>
-                            <td>
-                                <?php echo htmlspecialchars($row['ID']); ?>
-                            </td>
                             <td>
                                 <?php echo htmlspecialchars($row['USERNAME']); ?>
                             </td>
@@ -85,10 +81,6 @@
                     </li>
                 </ul>
             </form>
-        </div>
-    </div>
-
-
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($_POST['password'] !== $_POST['password2']) {
@@ -97,23 +89,24 @@
             $password = $_POST['password'];
 
             // Add username and password to USERS
-            $chgPassSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE ID = ?";
-            $params = [$$password, $customer];
+            $chgPassSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE USERNAME = ?";
+            $params = [$password, $customer];
             $chgPassStmt = sqlsrv_query($conn, $chgPassSql, $params);
             if ($chgPassStmt === false) {
                 die(print_r(sqlsrv_errors(), true));
             } else {
-                echo " Password updated successfully!";
+                echo "Password updated successfully!";
             }
         }
-
         // Close the statements
-        sqlsrv_free_stmt($checkUserInUsersStmt);
-        sqlsrv_free_stmt($addUserStmt);
+        sqlsrv_free_stmt($chgPassStmt);
     }
-
     sqlsrv_close($conn);
     ?>
+        </div>
+    </div>
+
+
     <script>
         function showPsw(element) {
             var row = element.closest('tr'); // Find the closest row
