@@ -77,22 +77,26 @@ require "../requirements/login_check.php";
                     ?>
                 </p>
             </div>
-            <div class="widget">
-                <h3>Total Invoices</h3>
-                <p id="total-invoice">
-                    <?php
-                    $countSql = "SELECT COUNT(*) AS total FROM SESAUSERS";
-                    $countStmt = sqlsrv_query($conn, $countSql);
+            <?php
+            if ($_SESSION['customer'] === 'memin') {
+                echo "<div class='widget'>
+                    <h3>Total Users</h3>
+                    <p id='total-users'>
+                        ";
+                $countSql = "SELECT COUNT(*) AS total FROM SESAUSERS";
+                $countStmt = sqlsrv_query($conn, $countSql);
 
-                    if ($countStmt === false) {
-                        die(print_r(sqlsrv_errors(), true));
-                    }
+                if ($countStmt === false) {
+                    die(print_r(sqlsrv_errors(), true));
+                }
 
-                    $row = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
-                    echo $row['total'];
-                    ?>
-                </p>
-            </div>
+                $row = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
+                echo $row['total'];
+                echo "</p>
+                        </div>";
+            }
+
+            ?>
         </div>
     </div>
     </div>
