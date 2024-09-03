@@ -20,7 +20,7 @@ require "../requirements/login_check.php";
                 $customer = $_SESSION["customer"];
                 $nameSql = "SELECT NAME1 FROM IASSALHEAD WHERE CUSTOMER = '$customer'";
                 $nameStmt = sqlsrv_query($conn, $nameSql);
-                if ($nameStmt === false || $customer ==='memin') {
+                if ($nameStmt === false || $customer === 'memin') {
                     echo ($customer);
                 } else {
                     $name = sqlsrv_fetch_array($nameStmt, SQLSRV_FETCH_ASSOC);
@@ -76,9 +76,25 @@ require "../requirements/login_check.php";
                     echo $total_records;
                     ?>
                 </p>
+            </div>
+            <div class="widget">
+                <h3>Total Invoices</h3>
+                <p id="total-invoice">
+                    <?php
+                    $countSql = "SELECT COUNT(*) AS total FROM SESAUSERS";
+                    $countStmt = sqlsrv_query($conn, $countSql);
 
+                    if ($countStmt === false) {
+                        die(print_r(sqlsrv_errors(), true));
+                    }
+
+                    $row = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
+                    echo $row['total'];
+                    ?>
+                </p>
             </div>
         </div>
+    </div>
     </div>
 
     <?php sqlsrv_close($conn); ?>
