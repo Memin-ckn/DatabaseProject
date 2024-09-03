@@ -40,7 +40,7 @@ require "../requirements/login_check.php";
             $total_pages = ceil($total_records / $limit);
 
             // Fetch the data with pagination (offset and fetch is used for pagination)
-            $dataSql = "SELECT ID, USERNAME, PASSWORD FROM SESAUSERS WHERE ID > 2 ORDER BY ID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+            $dataSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS ORDER BY USERNAME OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
             $dataParams = [$start, $limit];
             $dataStmt = sqlsrv_query($conn, $dataSql, $dataParams);
@@ -57,7 +57,6 @@ require "../requirements/login_check.php";
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>USERNAME</th>
                         <th>PASSWORD</th>
                     </tr>
@@ -65,9 +64,6 @@ require "../requirements/login_check.php";
                 <tbody>
                     <?php while ($row = sqlsrv_fetch_array($dataStmt, SQLSRV_FETCH_ASSOC)): ?>
                         <tr>
-                            <td>
-                                <?php echo htmlspecialchars($row['ID']); ?>
-                            </td>
                             <td>
                                 <?php echo htmlspecialchars($row['USERNAME']); ?>
                             </td>

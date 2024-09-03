@@ -20,11 +20,6 @@ require "../requirements/styles_and_scripts.php";
             <form action="" method="get">
                 <ul>
                     <li>
-                        <label for="ID">ID:</label>
-                        <input type="text" name="ID" id="ID"
-                            value="<?php echo isset($_GET['ID']) ? htmlspecialchars($_GET['ID']) : ''; ?>">
-                    </li>
-                    <li>
                         <label for="USERNAME">USERNAME:</label>
                         <input type="text" name="USERNAME" id="USERNAME"
                             value="<?php echo isset($_GET['USERNAME']) ? htmlspecialchars($_GET['USERNAME']) : ''; ?>">
@@ -44,29 +39,16 @@ require "../requirements/styles_and_scripts.php";
         $whereClauses = [];
         $params = [];
 
-        // Apply the ID filter
-        if (isset($_GET['ID']) && $_GET['ID'] !== '') {
-            $oldID = $_GET['ID'];
-            $whereClauses[] = "ID = ?";
-            $params[] = $oldID;
-        }
-
         // Apply the USERNAME filter
         if (isset($_GET['USERNAME']) && $_GET['USERNAME'] !== '') {
             $whereClauses[] = "USERNAME = ?";
             $params[] = $_GET['USERNAME'];
-            if (!isset($oldID)) {
-                $oldIDSql = "SELECT ID FROM SESAUSERS WHERE USERNAME = ?";
-                $oldIDStmt = sqlsrv_query($conn, $oldIDSql, [$_GET['USERNAME']]);
-                $row = sqlsrv_fetch_array($oldIDStmt, SQLSRV_FETCH_ASSOC);
-                $oldID = $row['ID'] ?? null; // Handle cases where USERNAME is not found
-            }
         }
 
         // Display the table only if a filter is applied
         if (count($whereClauses) > 0) {
             $whereSql = "WHERE " . implode(" AND ", $whereClauses);
-            $dataSql = "SELECT ID, USERNAME, PASSWORD FROM SESAUSERS $whereSql";
+            $dataSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS $whereSql";
             $dataStmt = sqlsrv_query($conn, $dataSql, $params);
 
             if ($dataStmt === false) {
@@ -78,7 +60,6 @@ require "../requirements/styles_and_scripts.php";
                     <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>USERNAME</th>
                             <th>PASSWORD</th>
                         </tr>
@@ -89,7 +70,6 @@ require "../requirements/styles_and_scripts.php";
             while ($row = sqlsrv_fetch_array($dataStmt, SQLSRV_FETCH_ASSOC)) {
                 $hasData = true;
                 echo "<tr>
-                        <td>" . htmlspecialchars($row['ID']) . "</td>
                         <td>" . htmlspecialchars($row['USERNAME']) . "</td>
                         <td>" . htmlspecialchars($row['PASSWORD']) . "</td>
                       </tr>";
@@ -102,10 +82,6 @@ require "../requirements/styles_and_scripts.php";
                 echo "<div class='widget form'>
                         <form action='' method='post'>
                             <ul>
-                                <li>
-                                    <label for='newID'>New ID:</label>
-                                    <input type='text' name='newID' id='newID' value=''>
-                                </li>
                                 <li>
                                     <label for='newPASSWORD'>New Password:</label>
                                     <input type='password' name='newPASSWORD' id='newPASSWORD' value=''>
@@ -121,34 +97,16 @@ require "../requirements/styles_and_scripts.php";
 
         // Handle the POST request to update the user information
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $newID = isset($_POST['newID']) ? $_POST['newID'] : null;
             $newPASSWORD = isset($_POST['newPASSWORD']) ? $_POST['newPASSWORD'] : null;
 
             if ($newPASSWORD) {
-                $updatePasswordSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE ID = ?";
-                $params = [$newPASSWORD, $oldID];
+                $updatePasswordSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE USERNAME = ?";
+                $params = [$newPASSWORD, $_GET['USERNAME']];
                 $updatePasswordStmt = sqlsrv_query($conn, $updatePasswordSql, $params);
                 if ($updatePasswordStmt === false) {
                     die(print_r(sqlsrv_errors(), true));
                 } else {
                     echo " Password updated successfully!\n";
-                }
-            }
-
-            if ($newID) {
-                $checkIDSql = "SELECT ID FROM SESAUSERS WHERE ID = ?";
-                $checkIDStmt = sqlsrv_query($conn, $checkIDSql, [$newID]);
-                if (sqlsrv_fetch_array($checkIDStmt, SQLSRV_FETCH_ASSOC)) {
-                    echo "The new ID already exists. Please choose a different ID.";
-                } else {
-                    $updateIDSql = "UPDATE SESAUSERS SET ID = ? WHERE ID = ?";
-                    $params = [$newID, $oldID];
-                    $updateIDStmt = sqlsrv_query($conn, $updateIDSql, $params);
-                    if ($updateIDStmt === false) {
-                        die(print_r(sqlsrv_errors(), true));
-                    } else {
-                        echo " ID updated successfully!\n";
-                    }
                 }
             }
         }
