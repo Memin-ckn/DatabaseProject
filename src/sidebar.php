@@ -8,10 +8,9 @@
         if (isset($_SESSION['customer']) && $_SESSION['customer'] === 'memin'): ?>
             <li><a href="users.php">Users</a></li>
         <?php endif; ?>
-        <?php
-        if (isset($_SESSION['customer']) && $_SESSION['customer'] !== 'memin'): ?>
-            <li><a href="user_details.php">User Details</a></li>
-        <?php endif; ?>
+
+        <li><a href="user_details.php">User Details</a></li>
+
 
     </ul>
     <ul>
