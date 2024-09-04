@@ -1,0 +1,3 @@
+<?php
+define('ISDELETETABLE', ['IASPRDORDER', 'IASSALHEAD']);
+?>

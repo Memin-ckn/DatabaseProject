@@ -15,8 +15,15 @@ body {
   overflow: scroll;
 }
 
+.main-content {
+  margin-left: 20%;
+  padding: 30px;
+  width: 80%; 
+  overflow-y: scroll;
+}
+
 .sidebar {
-  width: 260px;
+  width: 20%;
   background: #942db6;
   color: white;
   height: 100vh;
@@ -92,12 +99,6 @@ body {
   background-color: #e2b8f5;
 }
 
-.main-content {
-  margin-left: 260px;
-  padding: 30px;
-  width: calc(100% - 260px);
-  overflow-y: scroll;
-}
 
 footer {
   background-color: #ffffff;
@@ -243,7 +244,8 @@ td {
   position: relative;
   width: 100%;
 }
-input:disabled{
+
+input:disabled {
   background-color: inherit;
 }
 
@@ -359,6 +361,7 @@ input:disabled{
   font-weight: bold;
   font-size: 1.2em;
 }
+
 .widgetButton:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
@@ -367,7 +370,8 @@ input:disabled{
 .widgetButton a {
   text-decoration: none;
 }
+
 .widgetButton a::after {
   text-decoration: none;
-  
+
 }
