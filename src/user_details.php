@@ -11,7 +11,7 @@
 
 
 <body>
-    <?php include "sidebar.php" ?>
+    <?php include "sidebar.php"?>
 
     <div class="main-content">
 
@@ -81,28 +81,28 @@
                     </li>
                 </ul>
             </form>
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if ($_POST['password'] !== $_POST['password2']) {
-            echo "<h3>Passwords don't match</h3>";
-        } else {
-            $password = $_POST['password'];
+            <?php
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                if ($_POST['password'] !== $_POST['password2']) {
+                    echo "<h3>Passwords don't match</h3>";
+                } else {
+                    $password = $_POST['password'];
 
-            // Add username and password to USERS
-            $chgPassSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE USERNAME = ?";
-            $params = [$password, $customer];
-            $chgPassStmt = sqlsrv_query($conn, $chgPassSql, $params);
-            if ($chgPassStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            } else {
-                echo "Password updated successfully!";
+                    // Add username and password to USERS
+                    $chgPassSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE USERNAME = ?";
+                    $params = [$password, $customer];
+                    $chgPassStmt = sqlsrv_query($conn, $chgPassSql, $params);
+                    if ($chgPassStmt === false) {
+                        die(print_r(sqlsrv_errors(), true));
+                    } else {
+                        header('Location: user_details.php');
+                    }
+                }
+                // Close the statements
+                sqlsrv_free_stmt($chgPassStmt);
             }
-        }
-        // Close the statements
-        sqlsrv_free_stmt($chgPassStmt);
-    }
-    sqlsrv_close($conn);
-    ?>
+            sqlsrv_close($conn);
+            ?>
         </div>
     </div>
 
