@@ -3,6 +3,7 @@
 
 <head>
     <?php include "../requirements/styles_and_scripts.php"; ?>
+    <title>Order Details</title>
 </head>
 <?php
 require "../requirements/connection.php";

@@ -1,8 +1,3 @@
-<?php
-require "../requirements/connection.php";
-require "../requirements/login_check.php";
-require "../requirements/styles_and_scripts.php";
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,8 +5,13 @@ require "../requirements/styles_and_scripts.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php require "../requirements/styles_and_scripts.php"; ?>
     <title>Edit User</title>
 </head>
+<?php
+require "../requirements/connection.php";
+require "../requirements/login_check.php";
+?>
 
 <body>
     <?php include "sidebar.php"; ?>

@@ -13,5 +13,4 @@ if (in_array($currentFile, $restrictedFiles) && $_SESSION['customer'] !== 'memin
     header('Location: ../src/index.php');
     exit;
 }
-
 ?>

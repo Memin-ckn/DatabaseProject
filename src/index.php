@@ -2,7 +2,8 @@
 <html lang="en">
 
 <head>
-    <?php include "../requirements/styles_and_scripts.php"; ?>
+    <?php include "../requirements/styles_and_scripts.php" ?>
+    <title>Home</title>
 </head>
 <?php
 require "../requirements/connection.php";

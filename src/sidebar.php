@@ -1,7 +1,7 @@
 <div class="sidebar">
-    <h2>Dashboard</h2>
+    <h2>SESA Panel</h2>
     <ul>
-        <li><a href="index.php">Dashboard</a></li>
+        <li><a href="index.php">Home</a></li>
         <li><a href="orders.php">Order Details</a></li>
         <li><a href="invoice.php">Invoice Details</a></li>
         <?php

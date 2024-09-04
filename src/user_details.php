@@ -6,7 +6,7 @@
     require "../requirements/connection.php";
     require "../requirements/login_check.php";
     ?>
-    <title>Details</title>
+    <title>User Details</title>
 </head>
 
 

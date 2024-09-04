@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add</title>
+    <title>Add User</title>
     <?php
     require "../requirements/styles_and_scripts.php";
     require "../requirements/connection.php";
