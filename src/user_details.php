@@ -11,7 +11,7 @@
 
 
 <body>
-    <?php include "sidebar.php"?>
+    <?php include "../support/sidebar.php"?>
 
     <div class="main-content">
 

@@ -12,7 +12,7 @@ require "../requirements/login_check.php";
 
 <body>
 
-    <?php include "sidebar.php" ?>
+    <?php include "../support/sidebar.php" ?>
 
     <div class="main-content">
 
@@ -173,7 +173,7 @@ require "../requirements/login_check.php";
                 </tbody>
             </table>
         </div>
-        <?php include "pagination.php" ?>
+        <?php include "../requirements/pagination.php" ?>
 
     </div>
 

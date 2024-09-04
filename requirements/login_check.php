@@ -1,6 +1,6 @@
 <?php
 if (!isset($_SESSION['customer'])) {
-    header("Location: login.php");
+    header("Location: ../src/login.php");
     exit();
 }
 

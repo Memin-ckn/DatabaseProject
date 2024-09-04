@@ -12,7 +12,7 @@ require "../requirements/login_check.php";
 
 <body>
 
-    <?php include "sidebar.php" ?>
+    <?php include "../support/sidebar.php" ?>
 
     <div class="main-content">
         <div class="widgets">
@@ -79,7 +79,7 @@ require "../requirements/login_check.php";
                 </tbody>
             </table>
         </div>
-        <?php include "pagination.php" ?>
+        <?php include "../requirements/pagination.php" ?>
     </div>
     <?php sqlsrv_close($conn); ?>
     <script>

@@ -14,7 +14,7 @@ require "../requirements/login_check.php";
 ?>
 
 <body>
-    <?php include "sidebar.php"; ?>
+    <?php include "../support/sidebar.php"; ?>
     <div class="main-content">
         <div class="widget form">
             <form action="" method="get">

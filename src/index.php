@@ -11,7 +11,7 @@ require "../requirements/login_check.php";
 ?>
 
 <body>
-    <?php include "sidebar.php" ?>
+    <?php include "../support/sidebar.php" ?>
 
     <div class="main-content">
         <!-- Displays the customer at the top -->

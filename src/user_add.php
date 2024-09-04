@@ -14,7 +14,7 @@
 
 <body>
 
-    <?php require "sidebar.php" ?>
+    <?php require "../support/sidebar.php" ?>
 
     <div class="main-content">
         <div class="widget form">
