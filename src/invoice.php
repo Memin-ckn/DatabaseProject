@@ -4,78 +4,72 @@
 <head>
     <?php include "../requirements/styles_and_scripts.php"; ?>
     <title>Invoice Details</title>
+    <script type="text/javascript">
+        function error(id, msg) {
+            document.getElementById(id).innerText = msg;
+        }
+    </script>
 </head>
+
 <?php
 require "../requirements/connection.php";
 require "../requirements/login_check.php";
+require "../lib/func.php"; // Includes getCount and getName functions
+
+$errorMessage = '';
+
+// Pagination setup
+$limit = 25;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$start = ($page - 1) * $limit;
+
+list($whereSql, $params) = filter(['DOCNUM', 'NAME1', 'CITY', 'TELNUM'], 'IASSALHEAD', null, null, $_SESSION['customer']);
+
+// Get total records
+$total_records = getCount($conn, "IASSALHEAD", $whereSql, $params);
+$total_pages = ceil($total_records / $limit);
+
+// Fetch data with pagination
+$dataSql = "SELECT DOCNUM, NAME1, CITY, TELNUM FROM IASSALHEAD $whereSql ORDER BY DOCNUM OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+$dataParams = array_merge($params, [$start, $limit]);
+$dataStmt = sqlsrv_prepare($conn, $dataSql, $dataParams);
+
+if (sqlsrv_execute($dataStmt) === false) {
+    $errorMessage = 'Error getting the table';
+}
 ?>
+
 
 <body>
 
-    <?php include "../support/sidebar.php" ?>
+    <?php include "../support/sidebar.php"; ?>
 
     <div class="main-content">
-
         <div class="widget form">
-            <!-- Filter Form -->
             <form method="GET" action="">
+                <p id="error-msg"></p>
                 <ul>
                     <li>
                         <label for="customer">CUSTOMER:</label>
-                        <?php echo $_SESSION['customer'] ?>
+                        <?php echo $_SESSION['customer']; ?>
                     </li>
                     <li>
                         <label for="DOCNUM">DOCNUM:</label>
                         <input type="text" name="DOCNUM" id="DOCNUM"
                             value="<?php echo isset($_GET['DOCNUM']) ? htmlspecialchars($_GET['DOCNUM']) : ''; ?>">
                     </li>
-                    
                     <li>
-
                         <button type="submit">Filter</button>
                         <a href="invoice.php"><button type="button">Reset</button></a>
                     </li>
                 </ul>
             </form>
         </div>
+
         <div class="widget">
-            <?php
-            // Set pagination parameters
-            $limit = 25;
-            $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-            $start = ($page - 1) * $limit;
-
-            include "../requirements/filter_invoice.php";
-
-            // Get the total number of records from filter.php
-            $countSql = "SELECT COUNT(*) AS total FROM IASSALHEAD $whereSql";
-            $countStmt = sqlsrv_query($conn, $countSql, $params);
-
-            if ($countStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-
-            $row = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
-            $total_records = $row['total'];
-
-            // Calculate total pages
-            $total_pages = ceil($total_records / $limit);
-    
-            // Fetch the data with pagination (offset and fetch is used for pagination)
-            $dataSql = "SELECT DOCNUM, NAME1, CITY, TELNUM FROM IASSALHEAD $whereSql ORDER BY DOCNUM OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-            $dataParams = array_merge($params, [$start, $limit]);
-            $dataStmt = sqlsrv_query($conn, $dataSql, $dataParams);
-
-            if ($dataStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-            ?>
-            <div class="widget">
-                <p>Total Records:
-                    <?php echo $total_records ?>
-                </p>
-            </div>
+            <p>Total Records:
+                <?php echo $total_records; ?>
+            </p>
             <table>
                 <thead>
                     <tr>
@@ -111,7 +105,8 @@ require "../requirements/login_check.php";
                 </tbody>
             </table>
         </div>
-        <?php include "../requirements/pagination.php" ?>
+
+        <?php include "../requirements/pagination.php"; ?>
 
     </div>
 
@@ -119,19 +114,17 @@ require "../requirements/login_check.php";
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Attach the click event to the <i> element
             $('.clickable-row i').on('click', function (e) {
-                e.stopPropagation(); // Prevent the event from bubbling up to the row
+                e.stopPropagation();
 
                 var docnum = $(this).closest('.clickable-row').data('docnum');
                 var expandableRow = $(this).closest('.clickable-row').next('.expandable-row');
                 var expandedContent = expandableRow.find('.expanded-content');
 
                 if (expandableRow.is(':visible')) {
-                    expandableRow.hide(); // Collapse if already expanded
-                    $(this).removeClass('fa-minus').addClass('fa-plus'); // Change icon back to plus
+                    expandableRow.hide();
+                    $(this).removeClass('fa-minus').addClass('fa-plus');
                 } else {
-                    // Fetch and display data if not already loaded
                     if (expandedContent.is(':empty')) {
                         $.ajax({
                             url: '../requirements/fetch_invoice_details.php',
@@ -139,17 +132,18 @@ require "../requirements/login_check.php";
                             data: { docnum: docnum },
                             success: function (response) {
                                 expandedContent.html(response);
-                                expandableRow.show(); // Expand the row to show content
-                                $(this).removeClass('fa-plus').addClass('fa-minus'); // Change icon to minus
+                                expandableRow.show();
+                                $(this).removeClass('fa-plus').addClass('fa-minus');
                             }.bind(this)
                         });
                     } else {
-                        expandableRow.show(); // Just show the already loaded content
-                        $(this).removeClass('fa-plus').addClass('fa-minus'); // Change icon to minus
+                        expandableRow.show();
+                        $(this).removeClass('fa-plus').addClass('fa-minus');
                     }
                 }
             });
         });
+        error('error-msg', '<?php echo $errorMessage; ?>');
     </script>
 
 </body>

@@ -6,8 +6,8 @@ require "../lib/func.php";
 
 $customer = $_SESSION["customer"];
 $name = getName($conn, 'NAME1', 'IASSALHEAD', $customer);
-$totalOrders = getCount($conn, 'IASPRDORDER', $customer);
-$totalInvoices = getCount($conn, 'IASSALHEAD', $customer);
+$totalOrders = getCount($conn, 'IASPRDORDER',null,null, $customer);
+$totalInvoices = getCount($conn, 'IASSALHEAD',null,null, $customer);
 $totalUsers = ($customer === 'memin') ? getCount($conn, 'SESAUSERS') : null;
 ?>
 

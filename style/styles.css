@@ -16,14 +16,15 @@ body {
 }
 
 .main-content {
-  margin-left: 20%;
+  margin-left: 260px;
   padding: 30px;
-  width: 80%; 
+  width: calc(100% - 260px);
   overflow-y: scroll;
 }
 
+
 .sidebar {
-  width: 20%;
+  width: 260px;
   background: #942db6;
   color: white;
   height: 100vh;

@@ -1,16 +1,17 @@
 <?php
 require "config.php";
-function getCount($conn, $table, $customer = null)
+function getCount($conn, $table, $whereSql = null, $params = null, $customer = null)
 {
-    $whereSql = "";
-    $params = [];
-    if (in_array($table, ISDELETETABLE)) {
-        $whereSql = "WHERE ISDELETE = 0 ";
-        if ($customer && $customer !== 'memin') {
-            $whereSql .= "AND CUSTOMER = ?";
-            $params[] = $customer;
-        } else {
-            $params = [];
+
+    if ($customer !== null) {
+        if (in_array($table, ISDELETETABLE)) {
+            $whereSql = "WHERE ISDELETE = 0 ";
+            if ($customer && $customer !== 'memin') {
+                $whereSql .= "AND CUSTOMER = ?";
+                $params[] = $customer;
+            } else {
+                $params = [];
+            }
         }
     }
 
@@ -20,6 +21,7 @@ function getCount($conn, $table, $customer = null)
         return "Error retrieving count";
         //return null;
     }
+
 
     $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     return $row['total'];
@@ -35,6 +37,37 @@ function getName($conn, $column, $table, $customer)
     }
     $row = sqlsrv_fetch_array($nameStmt, SQLSRV_FETCH_ASSOC);
     return $row['name'];
+}
+
+function filter(array $columns, $table, $whereClauses = null, array $params = null, $customer = null)
+{
+    if ($whereClauses !== null && $params !== null) {
+        $whereSql = $whereClauses ? "WHERE " . implode(" AND ", $whereClauses) : "";
+        if ($customer !== null) {
+            $whereSql .= "AND CUSTOMER = ?";
+            $params[] = $customer;
+        }
+    } else {
+        $whereClauses = [];
+        $params = [];
+        foreach ($columns as $filter) {
+            if (isset($_GET[$filter]) && $_GET[$filter] !== '') {
+                $whereClauses[] = "$filter = ?";
+                $params[] = $_GET[$filter];
+            }
+        }
+        if (in_array($table, ISDELETETABLE)) {
+            $whereClauses[] = "ISDELETE = ?";
+            $params[] = 0;
+        }
+        if ($customer !== null) {
+            $whereClauses[] = "CUSTOMER = ?";
+            $params[] = $customer;
+        }
+        $whereSql = $whereClauses ? "WHERE " . implode(" AND ", $whereClauses) : "";
+    }
+
+    return array($whereSql, $params);
 }
 
 
