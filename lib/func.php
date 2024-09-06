@@ -79,5 +79,16 @@ function filter(array $columns, $table, $whereClauses = null, array $params = nu
     return array($whereSql, $params);
 }
 
-
+function changePassword($conn, $table, $username, $password)
+{
+    $chgPassSql = "UPDATE $table SET PASSWORD = ? WHERE USERNAME = ?";
+    $params = [$password, $username];
+    $chgPassStmt = sqlsrv_prepare($conn, $chgPassSql, $params);
+    if (sqlsrv_execute($chgPassStmt) === false) {
+        sqlsrv_free_stmt($chgPassStmt);
+        return false;
+    }
+    sqlsrv_free_stmt($chgPassStmt);
+    return true;
+}
 ?>

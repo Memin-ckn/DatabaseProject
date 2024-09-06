@@ -2,43 +2,53 @@
 <html lang="en">
 
 <head>
-    <?php include "../requirements/styles_and_scripts.php";
+    <?php
+    include "../requirements/styles_and_scripts.php";
     require "../requirements/connection.php";
     require "../requirements/login_check.php";
+    require "../lib/func.php";
+
+    $error = "";
+    $name = getName($conn, 'NAME1', 'IASSALHEAD', $customer);
+
+    $infoSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS WHERE USERNAME = ?";
+    $infoStmt = sqlsrv_prepare($conn, $infoSql, [$customer]);
+
+    if (sqlsrv_execute($infoStmt) === false) {
+        $error = "Error when getting user details";
+    }
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($_POST['password'] !== $_POST['password2']) {
+            echo "<h3>Passwords don't match</h3>";
+        } else {
+            $password = $_POST['password'];
+            if (changePassword($conn, 'SESAUSERS', $customer, $password) === false) {
+                $error = "Couldn't change the password";
+            } else {
+                header('Location: user_details.php?success=passwordChanged');
+            }
+        }
+    }
     ?>
     <title>User Details</title>
 </head>
 
-
 <body>
-    <?php include "../support/sidebar.php"?>
+    <?php include "../support/sidebar.php" ?>
 
     <div class="main-content">
 
         <header>
             <h1>Welcome,
-                <?php
-                $customer = $_SESSION["customer"];
-                $nameSql = "SELECT NAME1 FROM IASSALHEAD WHERE CUSTOMER = '$customer'";
-                $nameStmt = sqlsrv_query($conn, $nameSql);
-                if ($nameStmt === false || $customer === 'memin') {
-                    echo ($customer);
-                } else {
-                    $name = sqlsrv_fetch_array($nameStmt, SQLSRV_FETCH_ASSOC);
-                    echo $name['NAME1'];
-                }
-                ?>
+                <?php echo $customer === 'memin' ? $customer : $name; ?>
             </h1>
         </header>
         <div class="widget">
-            <?php
-            $infoSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS WHERE USERNAME = ?";
-            $infoStmt = sqlsrv_query($conn, $infoSql, [$customer]);
-
-            if ($infoStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-            ?>
+            <?php if ($error): ?>
+                <div class="error">
+                    <?= $error ?>
+                </div>
+            <?php endif; ?>
             <table>
                 <thead>
                     <tr>
@@ -81,47 +91,9 @@
                     </li>
                 </ul>
             </form>
-            <?php
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if ($_POST['password'] !== $_POST['password2']) {
-                    echo "<h3>Passwords don't match</h3>";
-                } else {
-                    $password = $_POST['password'];
-
-                    // Add username and password to USERS
-                    $chgPassSql = "UPDATE SESAUSERS SET PASSWORD = ? WHERE USERNAME = ?";
-                    $params = [$password, $customer];
-                    $chgPassStmt = sqlsrv_query($conn, $chgPassSql, $params);
-                    if ($chgPassStmt === false) {
-                        die(print_r(sqlsrv_errors(), true));
-                    } else {
-                        header('Location: user_details.php');
-                    }
-                }
-                // Close the statements
-                sqlsrv_free_stmt($chgPassStmt);
-            }
-            sqlsrv_close($conn);
-            ?>
+            <?php sqlsrv_close($conn); ?>
         </div>
     </div>
-
-
-    <script>
-        function showPsw(element) {
-            var row = element.closest('tr'); // Find the closest row
-            var input = row.querySelector('.userpsw'); // Get the input in this row
-            var eyeIcon = row.querySelector('.eye'); // Get the eye icon in this row
-
-            if (input.type === "password") {
-                input.type = "text";
-                eyeIcon.className = "eye fa-solid fa-eye-slash";
-            } else {
-                input.type = "password";
-                eyeIcon.className = "eye fa-solid fa-eye";
-            }
-        }
-    </script>
 </body>
 
 </html>
