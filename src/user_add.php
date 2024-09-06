@@ -9,11 +9,31 @@
     require "../requirements/styles_and_scripts.php";
     require "../requirements/connection.php";
     require "../requirements/login_check.php";
+    require "../lib/auth_functions.php";
+
+    $error = "";
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $customer = $_POST['username'];
+        $password = $_POST['password'];
+        $password2 = $_POST['password2'];
+        if ($password !== $password2) {
+            $error = "Passwords do not match.";
+        } elseif (userExistsInSESAUSERS($conn, $customer)) {
+            $error = "User already registered.";
+        } else {
+            if (registerUser($conn, $customer, $password)) {
+                header("Location: users.php?success=registered");
+                exit();
+            } else {
+                $error = "Error registering user.";
+            }
+        }
+    }
     ?>
 </head>
 
 <body>
-
     <?php require "../support/sidebar.php" ?>
 
     <div class="main-content">
@@ -41,43 +61,14 @@
             <form action="users.php">
                 <button type="submit">Back</button>
             </form>
+            <?php if ($error): ?>
+                <div class="error">
+                    <?= $error ?>
+                </div>
+            <?php endif; ?>
         </div>
-        <?php
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if ($_POST['password'] !== $_POST['password2']) {
-                echo "<h3>Passwords don't match</h3>";
-            } else {
-                $customer = $_POST['customer'];
-                $password = $_POST['password'];
-
-                // Check if the customer already exists in USERS
-                $checkUserInUsersSql = "SELECT * FROM SESAUSERS WHERE USERNAME = ?";
-                $checkUserInUsersStmt = sqlsrv_prepare($conn, $checkUserInUsersSql, [$customer]);
-                sqlsrv_execute($checkUserInUsersStmt);
-
-                if (sqlsrv_fetch_array($checkUserInUsersStmt, SQLSRV_FETCH_ASSOC)) {
-                    echo 'User already registered';
-                } else {
-                    // Add username and password to USERS
-                    $addUserSql = "INSERT INTO SESAUSERS (USERNAME, PASSWORD) VALUES (?, ?)";
-                    $addUserStmt = sqlsrv_prepare($conn, $addUserSql, [$customer, $password]);
-                    if (sqlsrv_execute($addUserStmt)) {
-                        echo 'Registration successful!';
-                        exit();
-                    } else {
-                        echo 'Error registering user.';
-                    }
-                }
-                // Close the statements
-                sqlsrv_free_stmt($checkUserInUsersStmt);
-                sqlsrv_free_stmt($addUserStmt);
-            }
-        }
-        sqlsrv_close($conn);
-        ?>
-
+        <?php sqlsrv_close($conn); ?>
     </div>
-
 </body>
 
 </html>
