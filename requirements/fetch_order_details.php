@@ -10,7 +10,7 @@
     }
 </style>
 <?php
-require "connection.php";
+require "../requirements/connection.php";
 if (isset($_GET['prdorder'])) {
     $prdOrder = $_GET['prdorder'];
 

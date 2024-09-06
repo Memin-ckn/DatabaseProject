@@ -1,21 +1,41 @@
+<?php
+// Includes
+include "../requirements/styles_and_scripts.php";
+require "../requirements/connection.php";
+require "../requirements/login_check.php";
+require "../lib/func.php";
+
+// Main logic
+$limit = 50;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$start = ($page - 1) * $limit;
+
+list($whereSql, $params) = filter(['POTYPE', 'PRDORDER', 'CLIENT', 'COMPANY', 'STATUS3'], 'IASPRDORDER', null, null, $customer);
+$totalRecords = getCount($conn, 'IASPRDORDER', $whereSql, $params);
+$total_pages = ceil($totalRecords / $limit);
+
+$dataSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+$dataStmt = sqlsrv_prepare($conn, $dataSql, array_merge($params, [$start, $limit]));
+
+if (sqlsrv_execute($dataStmt) === false) {
+    $errorMessage = 'Error getting the table';
+}
+
+if (isset($_GET['export'])) {
+    header("Location: ../export/csv.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <?php include "../requirements/styles_and_scripts.php"; ?>
     <title>Order Details</title>
 </head>
-<?php
-require "../requirements/connection.php";
-require "../requirements/login_check.php";
-?>
 
 <body>
-
-    <?php include "../support/sidebar.php" ?>
-
+    <?php include "../support/sidebar.php"; ?>
     <div class="main-content">
-
         <div class="widget form">
             <!-- Filter Form -->
             <form method="GET" action="">
@@ -67,77 +87,12 @@ require "../requirements/login_check.php";
                 </ul>
             </form>
         </div>
+
+        <!-- Data Table -->
         <div class="widget">
-            <?php
-            // Set pagination parameters
-            $limit = 50;
-            $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-            $start = ($page - 1) * $limit;
-
-            include "../requirements/filter_order.php";
-
-            // Get the total number of records from filter.php
-            $countSql = "SELECT COUNT(*) AS total FROM IASPRDORDER $whereSql";
-            $countStmt = sqlsrv_query($conn, $countSql, $params);
-
-            if ($countStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-
-            $row = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
-            $total_records = $row['total'];
-
-            // Calculate total pages
-            $total_pages = ceil($total_records / $limit);
-
-            if (isset($_GET['export'])) {
-                $exportType = $_GET['export'];
-                sqlsrv_close($conn);
-                header("Location: ../export/csv.php");
-                exit;
-            }
-            // Fetch the data with pagination (offset and fetch is used for pagination)
-            $dataSql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-            $dataParams = array_merge($params, [$start, $limit]);
-            $dataStmt = sqlsrv_query($conn, $dataSql, $dataParams);
-
-            if ($dataStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-            ?>
-            <div class="widget">
-                <p>Total Records:
-                    <?php echo $total_records ?>
-                </p>
-
-                <?php
-                // If filtered by PRDORDER, gets details
-                if (isset($_GET['PRDORDER']) && $_GET['PRDORDER'] !== '') {
-                    $qtySql = "SELECT DELIVERED, BYPRODQTY FROM IASPRDORDER $whereSql";
-                    $qtyStmt = sqlsrv_query($conn, $qtySql, $params);
-
-                    if ($qtyStmt === false) {
-                        die(print_r(sqlsrv_errors(), true));
-                    }
-
-                    if ($row = sqlsrv_fetch_array($qtyStmt, SQLSRV_FETCH_ASSOC)) {
-                        // Extract the two integer values
-                        $dlv = $row['DELIVERED'];
-                        $byq = $row['BYPRODQTY'];
-                        $totalQty = $dlv + $byq;
-                        ?>
-
-                        <p>
-                            Total quantity:
-                            <?php echo $totalQty, " kg sevk edildi."; ?>
-                        </p>
-
-                        <?php
-                    }
-                }
-                ?>
-            </div>
+            <p>Total Records:
+                <?php echo $totalRecords ?>
+            </p>
             <table>
                 <thead>
                     <tr>
@@ -173,41 +128,38 @@ require "../requirements/login_check.php";
                 </tbody>
             </table>
         </div>
-        <?php include "../requirements/pagination.php" ?>
-
+        <?php include "../requirements/pagination.php"; ?>
     </div>
 
     <?php sqlsrv_close($conn); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Attach the click event to the <i> element
             $('.clickable-row i').on('click', function (e) {
-                e.stopPropagation(); // Prevent the event from bubbling up to the row
+                e.stopPropagation();
 
-                var prdOrder = $(this).closest('.clickable-row').data('prdorder');
+                var prdorder = $(this).closest('.clickable-row').data('prdorder');
                 var expandableRow = $(this).closest('.clickable-row').next('.expandable-row');
                 var expandedContent = expandableRow.find('.expanded-content');
 
                 if (expandableRow.is(':visible')) {
-                    expandableRow.hide(); // Collapse if already expanded
-                    $(this).removeClass('fa-minus').addClass('fa-plus'); // Change icon back to plus
+                    expandableRow.hide();
+                    $(this).removeClass('fa-minus').addClass('fa-plus');
                 } else {
-                    // Fetch and display data if not already loaded
                     if (expandedContent.is(':empty')) {
                         $.ajax({
                             url: '../requirements/fetch_order_details.php',
                             type: 'GET',
-                            data: { prdorder: prdOrder },
+                            data: { prdorder: prdorder },
                             success: function (response) {
                                 expandedContent.html(response);
-                                expandableRow.show(); // Expand the row to show content
-                                $(this).removeClass('fa-plus').addClass('fa-minus'); // Change icon to minus
+                                expandableRow.show();
+                                $(this).removeClass('fa-plus').addClass('fa-minus');
                             }.bind(this)
                         });
                     } else {
-                        expandableRow.show(); // Just show the already loaded content
-                        $(this).removeClass('fa-plus').addClass('fa-minus'); // Change icon to minus
+                        expandableRow.show();
+                        $(this).removeClass('fa-plus').addClass('fa-minus');
                     }
                 }
             });

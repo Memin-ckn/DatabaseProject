@@ -5,7 +5,7 @@ function getCount($conn, $table, $whereSql = null, $params = null, $customer = n
 
     if ($customer !== null) {
         if (in_array($table, ISDELETETABLE)) {
-            $whereSql = "WHERE ISDELETE = 0 ";
+            $whereSql .= "WHERE ISDELETE = 0 ";
             if ($customer && $customer !== 'memin') {
                 $whereSql .= "AND CUSTOMER = ?";
                 $params[] = $customer;

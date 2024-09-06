@@ -4,6 +4,8 @@ if (!isset($_SESSION['customer'])) {
     exit();
 }
 
+$customer = $_SESSION['customer'];
+
 // Get the name of the current file
 $currentFile = basename($_SERVER['PHP_SELF']);
 $restrictedFiles = ['users.php', 'user_edit.php', 'user_add.php'];
