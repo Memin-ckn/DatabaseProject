@@ -37,8 +37,12 @@ $dataStmt = sqlsrv_prepare($conn, $dataSql, $dataParams);
 if (sqlsrv_execute($dataStmt) === false) {
     $errorMessage = 'Error getting the table';
 }
-?>
 
+if (isset($_GET['export'])) {
+    header("Location: ../export/csv.php");
+    exit;
+}
+?>
 
 <body>
 
@@ -61,6 +65,10 @@ if (sqlsrv_execute($dataStmt) === false) {
                     <li>
                         <button type="submit">Filter</button>
                         <a href="invoice.php"><button type="button">Reset</button></a>
+                    </li>
+                    <li>
+                        <!-- Export Button -->
+                        <button type="submit" name="export" value="csv">Export to CSV</button>
                     </li>
                 </ul>
             </form>

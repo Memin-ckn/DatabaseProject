@@ -1,5 +1,6 @@
 <?php
 require '../requirements/connection.php';
+require "../lib/func.php";
 
 $FileName = "Exported_data.csv";
 
@@ -13,9 +14,16 @@ $fp = fopen('php://output', 'w');
 
 $whereSql = $_SESSION['whereSql'];
 $params = $_SESSION['params'];
+$table = $_SESSION['table'];
+
+if ($table === 'IASPRDORDER'){
+    $sql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER";
+}
+elseif ($table === 'IASSALHEAD'){
+    $sql = "SELECT DOCNUM, NAME1, CITY, TELNUM FROM IASSALHEAD $whereSql ORDER BY DOCNUM";
+}
 
 // Fetch data from the database
-$sql = "SELECT POTYPE, PRDORDER, CLIENT, COMPANY FROM IASPRDORDER $whereSql ORDER BY PRDORDER";
 $stmt = sqlsrv_query($conn, $sql, $params);
 
 if ($stmt === false) {

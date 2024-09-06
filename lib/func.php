@@ -67,6 +67,9 @@ function filter(array $columns, $table, $whereClauses = null, array $params = nu
         $whereSql = $whereClauses ? "WHERE " . implode(" AND ", $whereClauses) : "";
     }
 
+    $_SESSION['whereSql'] = $whereSql;
+    $_SESSION['params'] = $params;
+    $_SESSION['table'] = $table;
     return array($whereSql, $params);
 }
 
