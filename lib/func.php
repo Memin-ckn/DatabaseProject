@@ -6,7 +6,7 @@ function getCount($conn, $table, $whereSql = null, $params = null, $customer = n
     if ($customer !== null) {
         if (in_array($table, ISDELETETABLE)) {
             $whereSql .= "WHERE ISDELETE = 0 ";
-            if ($customer && $customer !== 'memin') {
+            if ($customer && !in_array($customer, admin)) {
                 $whereSql .= "AND CUSTOMER = ?";
                 $params[] = $customer;
             } else {
@@ -44,8 +44,12 @@ function filter(array $columns, $table, $whereClauses = null, array $params = nu
     if ($whereClauses !== null && $params !== null) {
         $whereSql = $whereClauses ? "WHERE " . implode(" AND ", $whereClauses) : "";
         if ($customer !== null) {
-            $whereSql .= "AND CUSTOMER = ?";
-            $params[] = $customer;
+            if ($customer && !in_array($customer, admin)) {
+                $whereSql .= "AND CUSTOMER = ?";
+                $params[] = $customer;
+            } else {
+                $params = [];
+            }
         }
     } else {
         $whereClauses = [];
@@ -61,8 +65,10 @@ function filter(array $columns, $table, $whereClauses = null, array $params = nu
             $params[] = 0;
         }
         if ($customer !== null) {
-            $whereClauses[] = "CUSTOMER = ?";
-            $params[] = $customer;
+            if (!in_array($customer, admin)) {
+                $whereClauses[] = "CUSTOMER = ?";
+                $params[] = $customer;
+            }
         }
         $whereSql = $whereClauses ? "WHERE " . implode(" AND ", $whereClauses) : "";
     }
