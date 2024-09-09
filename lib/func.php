@@ -91,4 +91,21 @@ function changePassword($conn, $table, $username, $password)
     sqlsrv_free_stmt($chgPassStmt);
     return true;
 }
+
+function fetchUserData($conn, $whereSql, $params)
+{
+    $dataSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS $whereSql";
+    $dataStmt = sqlsrv_prepare($conn, $dataSql, $params);
+
+    if (sqlsrv_execute($dataStmt) === false) {
+        return false;
+    }
+
+    $userData = [];
+    while ($row = sqlsrv_fetch_array($dataStmt, SQLSRV_FETCH_ASSOC)) {
+        $userData[] = $row;
+    }
+
+    return $userData;
+}
 ?>
