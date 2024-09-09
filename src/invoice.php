@@ -45,7 +45,6 @@ if (isset($_GET['export'])) {
 </head>
 
 <body>
-
     <?php include "../support/sidebar.php"; ?>
 
     <div class="main-content">
@@ -115,7 +114,6 @@ if (isset($_GET['export'])) {
         </div>
         <?php include "../requirements/pagination.php"; ?>
     </div>
-
     <?php sqlsrv_close($conn); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -152,7 +150,5 @@ if (isset($_GET['export'])) {
         });
         error('error-msg', '<?php echo $errorMessage; ?>');
     </script>
-
 </body>
-
 </html>

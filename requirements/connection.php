@@ -1,10 +1,10 @@
 <?php
 session_start();
-$serverName = "SERVER IP";
+$serverName = "172.16.21.238";
 $connectionOptions = array(
-    "Database" => "DATABASE NAME",
-    "Uid" => "USER ID",
-    "PWD" => "PASSWORD"
+    "Database" => "TEST603",
+    "Uid" => "stajyer",
+    "PWD" => "Stajyer.123"
 );
 
 // Establishes the connection

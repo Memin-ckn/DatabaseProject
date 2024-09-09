@@ -2,6 +2,27 @@
 require "../requirements/connection.php";
 require "../requirements/login_check.php";
 include "../requirements/styles_and_scripts.php";
+require "../lib/func.php";
+// Set pagination parameters
+$limit = 50;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$start = ($page - 1) * $limit;
+
+// Get the total number of records
+$total_records = getCount($conn, 'SESAUSERS');
+
+// Calculate total pages
+$total_pages = ceil($total_records / $limit);
+
+// Fetch the data with pagination (offset and fetch is used for pagination)
+$dataSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS ORDER BY USERNAME OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+$dataParams = [$start, $limit];
+$dataStmt = sqlsrv_query($conn, $dataSql, $dataParams);
+
+if ($dataStmt === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,36 +41,6 @@ include "../requirements/styles_and_scripts.php";
             <a href="user_edit.php" class="widgetButton">Edit User</a>
         </div>
         <div class="widget">
-            <?php
-            // Set pagination parameters
-            $limit = 50;
-            $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-            $start = ($page - 1) * $limit;
-
-            // Get the total number of records
-            $countSql = "SELECT COUNT(*) AS total FROM SESAUSERS";
-            $countStmt = sqlsrv_query($conn, $countSql);
-
-            if ($countStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-
-            $row = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
-            $total_records = $row['total'];
-
-            // Calculate total pages
-            $total_pages = ceil($total_records / $limit);
-
-            // Fetch the data with pagination (offset and fetch is used for pagination)
-            $dataSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS ORDER BY USERNAME OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-            $dataParams = [$start, $limit];
-            $dataStmt = sqlsrv_query($conn, $dataSql, $dataParams);
-
-            if ($dataStmt === false) {
-                die(print_r(sqlsrv_errors(), true));
-            }
-            ?>
             <div class="widget">
                 <p>Total Users:
                     <?php echo $total_records ?>

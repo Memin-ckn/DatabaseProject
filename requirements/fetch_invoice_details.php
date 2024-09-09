@@ -30,7 +30,6 @@ if (isset($_GET['docnum'])) {
         $whereSql = "WHERE " . implode(" AND ", $whereClauses);
     }
 
-
     // Fetch all columns for the selected DOCNUM
     $sql = "SELECT DOCTYPE, DOCNUM, NAME1, CURRENCY, TELNUM, FAXNUM, TAXNUM, GROSS, SUBTOTAL, GRANDTOTAL FROM IASSALHEAD $whereSql";
     $stmt = sqlsrv_query($conn, $sql, $params);
