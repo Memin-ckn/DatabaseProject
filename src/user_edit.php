@@ -90,7 +90,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <?= htmlspecialchars($row['USERNAME']) ?>
                                 </td>
                                 <td>
-                                    <?= htmlspecialchars($row['PASSWORD']) ?>
+                                    <i class="eye fa-solid fa-eye" style="color: #9707da; cursor: pointer"
+                                        onclick="showPsw(this)"></i>
+                                    <input disabled type="password" name="userpsw" class="userpsw"
+                                        value="<?php echo htmlspecialchars($row['PASSWORD']); ?>">
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -103,6 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <form action='' method='post'>
                     <ul>
                         <li>
+
                             <label for='newPASSWORD'>New Password:</label>
                             <input type='password' name='newPASSWORD' id='newPASSWORD' value=''>
                         </li>
