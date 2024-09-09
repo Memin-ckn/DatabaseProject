@@ -12,6 +12,7 @@ header('Expires: 0');
 
 $fp = fopen('php://output', 'w');
 
+// Get filter from global
 $whereSql = $_SESSION['whereSql'];
 $params = $_SESSION['params'];
 $table = $_SESSION['table'];

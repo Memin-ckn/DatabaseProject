@@ -1,6 +1,4 @@
 <?php
-// Initialize the WHERE clause
-// Exclude deleted orders if ISDELETE is not set in the GET parameters
 $whereClauses = ["ISDELETE = ?"];
 $params = [0];
 
@@ -41,6 +39,7 @@ $whereSql = "";
 if (count($whereClauses) > 0) {
     $whereSql = "WHERE " . implode(" AND ", $whereClauses);
 }
+// Set global variables
 $_SESSION["whereSql"] = $whereSql;
 $_SESSION["params"] = $params;
 ?>

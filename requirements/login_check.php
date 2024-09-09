@@ -1,9 +1,12 @@
 <?php
+// Check if global customer set
 if (!isset($_SESSION['customer'])) {
+    // if not send to login
     header("Location: ../src/login.php");
     exit();
 }
 
+// Set global var customer
 $customer = $_SESSION['customer'];
 
 // Get the name of the current file

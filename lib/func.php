@@ -1,5 +1,7 @@
 <?php
 require "config.php";
+
+// Get count from table
 function getCount($conn, $table, $whereSql = null, $params = null, $customer = null)
 {
 
@@ -27,6 +29,7 @@ function getCount($conn, $table, $whereSql = null, $params = null, $customer = n
     return $row['total'];
 }
 
+// Get name of user
 function getName($conn, $column, $table, $customer)
 {
     $nameSql = "SELECT $column as name FROM $table WHERE CUSTOMER = '$customer'";
@@ -39,10 +42,13 @@ function getName($conn, $column, $table, $customer)
     return $row['name'];
 }
 
+// Prepares whereSql
 function filter(array $columns, $table, $whereClauses = null, array $params = null, $customer = null)
 {
+    // if whereClauses and params are set
     if ($whereClauses !== null && $params !== null) {
         $whereSql = $whereClauses ? "WHERE " . implode(" AND ", $whereClauses) : "";
+        // and if customer set
         if ($customer !== null) {
             if ($customer && !in_array($customer, admin)) {
                 $whereSql .= "AND CUSTOMER = ?";
@@ -51,7 +57,9 @@ function filter(array $columns, $table, $whereClauses = null, array $params = nu
                 $params = [];
             }
         }
-    } else {
+    }
+    // if whereClauses and params aren't set 
+    else {
         $whereClauses = [];
         $params = [];
         foreach ($columns as $filter) {
@@ -73,12 +81,14 @@ function filter(array $columns, $table, $whereClauses = null, array $params = nu
         $whereSql = $whereClauses ? "WHERE " . implode(" AND ", $whereClauses) : "";
     }
 
+    // set global variables
     $_SESSION['whereSql'] = $whereSql;
     $_SESSION['params'] = $params;
     $_SESSION['table'] = $table;
     return array($whereSql, $params);
 }
 
+// Changes password of user
 function changePassword($conn, $table, $username, $password)
 {
     $chgPassSql = "UPDATE $table SET PASSWORD = ? WHERE USERNAME = ?";
@@ -92,6 +102,7 @@ function changePassword($conn, $table, $username, $password)
     return true;
 }
 
+// Gets username and password
 function fetchUserData($conn, $whereSql, $params)
 {
     $dataSql = "SELECT USERNAME, PASSWORD FROM SESAUSERS $whereSql";

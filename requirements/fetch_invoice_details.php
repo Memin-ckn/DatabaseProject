@@ -10,6 +10,7 @@
     }
 </style>
 <?php
+// Gets data for dropdown menu
 require "connection.php";
 if (isset($_GET['docnum'])) {
     $whereClauses = ["ISDELETE = ?"];

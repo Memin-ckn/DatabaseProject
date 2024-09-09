@@ -10,7 +10,8 @@
     }
 </style>
 <?php
-require "../requirements/connection.php";
+require "connection.php";
+// Gets data for dropdown menu
 if (isset($_GET['prdorder'])) {
     $prdOrder = $_GET['prdorder'];
 

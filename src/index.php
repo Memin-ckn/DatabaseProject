@@ -4,6 +4,7 @@ require "../requirements/login_check.php";
 include "../requirements/styles_and_scripts.php";
 require "../lib/func.php";
 
+// Get variables
 $customer = $_SESSION["customer"];
 $name = getName($conn, 'NAME1', 'IASSALHEAD', $customer);
 $totalOrders = getCount($conn, 'IASPRDORDER',null,null, $customer);

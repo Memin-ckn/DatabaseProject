@@ -1,20 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <?php include "../requirements/styles_and_scripts.php"; ?>
-    <title>Invoice Details</title>
-    <script type="text/javascript">
-        function error(id, msg) {
-            document.getElementById(id).innerText = msg;
-        }
-    </script>
-</head>
-
 <?php
 require "../requirements/connection.php";
 require "../requirements/login_check.php";
-require "../lib/func.php"; // Includes getCount and getName functions
+require "../lib/func.php";
 
 $errorMessage = '';
 
@@ -43,6 +30,19 @@ if (isset($_GET['export'])) {
     exit;
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php include "../requirements/styles_and_scripts.php"; ?>
+    <title>Invoice Details</title>
+    <script type="text/javascript">
+        function error(id, msg) {
+            document.getElementById(id).innerText = msg;
+        }
+    </script>
+</head>
 
 <body>
 
@@ -113,14 +113,13 @@ if (isset($_GET['export'])) {
                 </tbody>
             </table>
         </div>
-
         <?php include "../requirements/pagination.php"; ?>
-
     </div>
 
     <?php sqlsrv_close($conn); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // Dropdown menu script
         $(document).ready(function () {
             $('.clickable-row i').on('click', function (e) {
                 e.stopPropagation();
