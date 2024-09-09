@@ -474,5 +474,5 @@ composer.lock
 *.scss.map
 
 #Big no no
-#requirements/connection.php
+requirements/connection.php
 DatabaseProjectTEST603.sqlproj
